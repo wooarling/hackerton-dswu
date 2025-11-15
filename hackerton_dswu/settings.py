@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',  # 로그아웃(블랙리스트)용
     'it_test',
     'accounts',
+    'events'
 ]
 
 
