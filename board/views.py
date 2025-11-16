@@ -12,7 +12,7 @@ from .forms import *
 from .models import *
 from .serializers import *
 
-/
+
 # Create your views here.
 def board_list(request):
     board = Board.objects.all()
