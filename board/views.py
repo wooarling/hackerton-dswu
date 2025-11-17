@@ -205,7 +205,7 @@ def like(request, pk):
 def comment_list(request, pk):
     if request.method == 'GET':
         try:
-            comment = Comments.objects.filter(board_comment_id=pk)
+            comment = Comments.objects.filter(board_comment_id=pk).order_by("id")
             comment_list = []
             for c in comment:
                 comment_list.append({
@@ -216,7 +216,7 @@ def comment_list(request, pk):
                     "date": c.date_comment.isoformat(),
                     "category": c.category,
                 })
-            return JsonResponse({'comment': comment_list})
+            return JsonResponse({'comment': comment_list},status=200)
         except Comments.DoesNotExist:
             return JsonResponse({"error": "댓글 없음"}, status=404)
 
@@ -267,17 +267,19 @@ def comment_upload(request, pk):
 
 
 @csrf_exempt
-def comment_edit(request, pk):
+def comment_edit(request, pk,comment_pk):
     if request.method == 'PUT':
         try:
-            comment = get_object_or_404(Comments, id=pk)
-            data = json.loads(request.body)
-            comment.comment_content = data['content']
+            comment = get_object_or_404(Comments, id=comment_pk,board_comment_id=pk)
+            data = json.loads(request.body.decode("utf-8")) if request.body else {}
+            edited_comment = data.get('content')
+            comment.content_comment=edited_comment
             # comment.comment_user = request.user
             comment.date_comment = timezone.now()
             comment.save()
             return JsonResponse({
                 "id": comment.id,
+                "board_id":comment.board_comment_id,
                 # "title": board.title,
                 "content": comment.content_comment,
                 "user": comment.user_comment.username,
@@ -290,13 +292,14 @@ def comment_edit(request, pk):
 
 
 @csrf_exempt
-def comment_delete(request, pk):
+def comment_delete(request, pk,comment_pk):
     if request.method == 'DELETE':
         try:
-            comment = get_object_or_404(Comments, id=pk)
+            comment = get_object_or_404(Comments, id=comment_pk,board_comment_id=pk)
             comment.delete()
             return JsonResponse({
                 "id": comment.id,
+                "board_id":comment.board_comment_id,
                 # "title": board.title,
                 "content": comment.content_comment,
                 "user": comment.user_comment.username,

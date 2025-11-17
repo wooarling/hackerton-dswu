@@ -11,10 +11,10 @@ urlpatterns = [
     path('api/board/<int:pk>/delete/',board_delete,name='delete'),
     path('board/',page_view,name='page_view'),
     path('api/board/<int:pk>/like/',like,name='like'),
-    path('api/comment/<int:pk>/',comment_list,name='comment_list'),
-    path('api/comment/<int:pk>/upload/',comment_upload,name='comment_upload'),
-    path('api/comment/<int:pk>/edit/',comment_edit,name='comment_edit'),
-    path('api/comment/<int:pk>/delete/',comment_delete,name='comment_delete/'),
+    path('api/board/<int:pk>/comment/',comment_list,name='comment_list'),
+    path('api/board/<int:pk>/comment/upload/',comment_upload,name='comment_upload'),
+    path('api/board/<int:pk>/comment/<int:comment_pk>/edit/',comment_edit,name='comment_edit'),
+    path('api/board/<int:pk>/comment/<int:comment_pk>/delete/',comment_delete,name='comment_delete/'),
 ]
 
 app_name='board'
