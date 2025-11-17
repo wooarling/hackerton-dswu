@@ -15,11 +15,41 @@ from .serializers import *
 
 # Create your views here.
 def board_list(request):
-    board = Board.objects.all()
+    boards = Board.objects.all().order_by('-pk')
+    board_list = []
+    for board in boards:
+        board_list.append({
+            'id': board.id,
+            'title': board.title,
+            'content': board.content,
+            'user': board.user_id,
+            'date': board.date.isoformat(),
+            'category': board.category,
+            'comment_count': board.comments.count(),  # 댓글 개수 추가
+        })
+
+    return JsonResponse({'board_list': board_list})
+
+    # board = Board.objects.all().order_by('-pk')
+    # board_list=[]
+    # for b in board:
+    #     board_list.append({
+    #         "id": b.id,
+    #         "title": b.title,
+    #         "content": b.content,
+    #         "user": b.user_id,
+    #         "date": b.date,
+    #         "category": b.category,
+    #         "comment_count": comments.count(),
+    #     })
     # serializer=BoardSerializer(board,many=True)
-    board = Board.objects.all().values('id', 'title', 'content', 'user', 'date', 'generation').order_by('-pk')
+    # board = Board.objects.all().values('id', 'title', 'content', 'user', 'date', 'category')
+    # comment = board.comments.all()
     # return JsonResponse(serializer.data,status=status.HTTP_200_OK)
-    return JsonResponse({'board_list': list(board)})
+    # return JsonResponse({
+    #     'board_list': board_list,
+        # 'comment_count': comment_count.count()
+    # })
 
 
 @csrf_exempt
@@ -30,7 +60,7 @@ def board_upload(request):
             title=data['title'],
             content=data['content'],
             user=request.user,
-            generation=data['generation'],
+            category=data.get('category'),
             date=timezone.now()
         )
         return JsonResponse({
@@ -39,7 +69,7 @@ def board_upload(request):
             "content": board_upload.content,
             "user": board_upload.user_id,
             "date": board_upload.date,
-            "generation": board_upload.generation
+            "category": board_upload.category
         })
     return JsonResponse({"error": "Post 요청만 가능"}, status=405)
 
@@ -47,13 +77,26 @@ def board_upload(request):
 def board_detail(request, pk):
     try:
         board = Board.objects.get(id=pk)
+        comment = board.comments.all()
+        comment_list = []
+        for c in comment:
+            comment_list.append({
+                "id": c.id,
+                # "title": board.title,
+                "content": c.content_comment,
+                "user": c.user_comment_id,
+                "date": c.date_comment.isoformat(),
+                "category": c.category,
+            })
         return JsonResponse({
             "id": board.id,
             "title": board.title,
             "content": board.content,
             "user": board.user_id,
-            "date": board.date,
-            "generation": board.generation
+            "date": board.date.isoformat(),
+            "category": board.category,
+            "comment": comment_list,
+            "comment_count": comment.count(),
         })
     except Board.DoesNotExist:
         return JsonResponse({"error": "게시글 없음"}, status=404)
@@ -76,7 +119,7 @@ def board_edit(request, pk):
                 "content": board.content,
                 "user": board.user_id,
                 "date": board.date.isoformat(),
-                "generation": board.generation
+                "category": board.category
             })
         except Board.DoesNotExist:
             return JsonResponse({"error": "게시글을 찾을 수 없음"}, status=404)
@@ -95,7 +138,7 @@ def board_delete(request, pk):
                 "content": board.content,
                 "user": board.user_id,
                 "date": board.date,
-                "generation": board.generation
+                "category": board.category
             })
         except Board.DoesNotExist:
             return JsonResponse({"error": "게시글을 찾을 수 없음"}, status=404)
@@ -123,7 +166,7 @@ def page_view(request):
             "content": board.content,
             "user": board.user_id,
             "date": board.date.isoformat(),
-            "generation": board.generation
+            "category": board.category
         })
 
     return JsonResponse({
@@ -162,15 +205,16 @@ def like(request, pk):
 def comment_list(request, pk):
     if request.method == 'GET':
         try:
-            comment = Comments.objects.filter(pk=pk)
+            comment = Comments.objects.filter(board_comment_id=pk)
             comment_list = []
             for c in comment:
                 comment_list.append({
-                    'id': comment.id,
-                    "title": board.title,
-                    'comment': comment.content_comment,
-                    'user': comment.user_comment,
-                    'date': comment.date_comment.isoformat(),
+                    "id": c.id,
+                    # "title": board.title,
+                    "content": c.content_comment,
+                    "user": c.user_comment_id,
+                    "date": c.date_comment.isoformat(),
+                    "category": c.category,
                 })
             return JsonResponse({'comment': comment_list})
         except Comments.DoesNotExist:
@@ -181,43 +225,66 @@ def comment_list(request, pk):
 def comment_upload(request, pk):
     if request.method == 'POST':
         data = json.loads(request.body)
-        comments = Comments.objects.create(
-            board_comment_id=pk,
-            # user_comment=request.user,    #front
-            user_comment_id=data.get('user_id', 1),
-            content_comment=data['content'],
-            date_comment=timezone.now(),
-        )
+        comments = Comments()
+        comments.board_comment_id = pk
+        comments.user_comment_id = data.get('user_id', 1)
+        comments.content_comment = data.get('content', '')
+        comments.date_comment = timezone.now()
+        comments.category = data.get('category', '프론트엔드')
+        comments.save()
+
         return JsonResponse({
-            "message":"댓글 작성됨",
-            "id": comments.id,
-            # # "title": board.title,
-            # "content": comments.content_comment,
-            # "user": comments.user_comment.username,
-            # "data": comments.date_comment.isoformat(),
-            # "generation": comments.generation,
+            "message": "댓글 작성됨",
+            "comments_id": comments.id,
+            "content": comments.content_comment,
+            "user": comments.user_comment.username,
+            "date": comments.date_comment.isoformat(),
+            "category": comments.category,
         })
+    return JsonResponse({"error":"POST만 가능"},status=405)
+
+
+# @csrf_exempt
+# def comment_upload(request, pk):
+#     if request.method == 'POST':
+#         data = json.loads(request.body)
+#         comments = Comments.objects.create(
+#             board_comment_id=pk,
+#             # user_comment=request.user,    #front
+#             user_comment_id=data.get('user_id', 1),
+#             content_comment=data['content'],
+#             date_comment=timezone.now(),
+#         )
+#         return JsonResponse({
+#             "message":"댓글 작성됨",
+#             "id": comments.id,
+#             # # "title": board.title,
+#             # "content": comments.content_comment,
+#             # "user": comments.user_comment.username,
+#             # "data": comments.date_comment.isoformat(),
+#             # "category": comments.category,
+#         })
 
 
 @csrf_exempt
 def comment_edit(request, pk):
     if request.method == 'PUT':
         try:
-            comment = get_object_or_404(Board, id=pk)
+            comment = get_object_or_404(Comments, id=pk)
             data = json.loads(request.body)
             comment.comment_content = data['content']
             # comment.comment_user = request.user
-            board.date = timezone.now()
-            board.save()
+            comment.date_comment = timezone.now()
+            comment.save()
             return JsonResponse({
-                "id": comments.id,
+                "id": comment.id,
                 # "title": board.title,
-                "content": comments.content_comment,
-                "user": comments.user_comment.username,
-                "data": comments.date_comment.isoformat(),
-                "generation": comment.generation,
+                "content": comment.content_comment,
+                "user": comment.user_comment.username,
+                "data": comment.date_comment.isoformat(),
+                "category": comment.category,
             })
-        except Board.DoesNotExist:
+        except Comments.DoesNotExist:
             return JsonResponse({"error": "게시글을 찾을 수 없음"}, status=404)
     return JsonResponse({"error": "PUT 요청만 가능"})
 
@@ -226,16 +293,16 @@ def comment_edit(request, pk):
 def comment_delete(request, pk):
     if request.method == 'DELETE':
         try:
-            comment = get_object_or_404(Board, id=pk)
+            comment = get_object_or_404(Comments, id=pk)
             comment.delete()
             return JsonResponse({
-                "id": comments.id,
+                "id": comment.id,
                 # "title": board.title,
-                "content": comments.content_comment,
-                "user": comments.user_comment.username,
-                "data": comments.date_comment.isoformat(),
-                "generation": comment.generation,
+                "content": comment.content_comment,
+                "user": comment.user_comment.username,
+                "data": comment.date_comment.isoformat(),
+                "category": comment.category,
             })
-        except Board.DoesNotExist:
+        except Comments.DoesNotExist:
             return JsonResponse({"error": "게시글을 찾을 수 없음"}, status=404)
     return JsonResponse({"error": "DELETE 요청만 가능"}, status=405)

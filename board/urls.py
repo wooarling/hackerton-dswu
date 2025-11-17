@@ -14,7 +14,7 @@ urlpatterns = [
     path('api/comment/<int:pk>/',comment_list,name='comment_list'),
     path('api/comment/<int:pk>/upload/',comment_upload,name='comment_upload'),
     path('api/comment/<int:pk>/edit/',comment_edit,name='comment_edit'),
-    path('api/comment/<int:pk>/delete',comment_delete,name='comment_delete'),
+    path('api/comment/<int:pk>/delete/',comment_delete,name='comment_delete'),
 ]
 
 app_name='board'

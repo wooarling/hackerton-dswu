@@ -11,7 +11,16 @@ class Board(models.Model):
     # writer=models.CharField(max_length=20,null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,blank=True)
     date = models.DateTimeField(default=timezone.now)
-    generation = models.CharField(max_length=20, default='10대')
+    # generation = models.CharField(max_length=20, default='10대')
+    category=models.CharField(max_length=20,default='프론트엔드',choices=[
+        ('프론트엔드','프론트엔드'),
+        ('백엔드','백엔드'),
+        ('사이버보안','사이버보안'),
+        ('게임개발','게임개발'),
+        ('사물인터넷','사물인터넷'),
+        ('빅데이터','빅데이터'),
+        ('인공지능','인공지능'),
+    ])
     like = models.ManyToManyField(User, related_name='liked_post', blank=True)
     like_count = models.PositiveIntegerField(default=0)
 
@@ -29,7 +38,16 @@ class Comments(models.Model):
     user_comment = models.ForeignKey(User, on_delete=models.CASCADE)
     date_comment = models.DateTimeField(
         default=timezone.now)  # default=timezone.now로 설정되어 있으므로 저장할 때 자동으로 들어감. 사용자가 입력하지도 뷰에서 따로 설정하지도 않음.
-    generation=models.CharField(max_length=20,default='10대')
+    # generation=models.CharField(max_length=20,default='10대')
+    category = models.CharField(max_length=20, default='프론트엔드', choices=[
+        ('프론트엔드', '프론트엔드'),
+        ('백엔드', '백엔드'),
+        ('사이버보안', '사이버보안'),
+        ('게임개발', '게임개발'),
+        ('사물인터넷', '사물인터넷'),
+        ('빅데이터', '빅데이터'),
+        ('인공지능', '인공지능'),
+    ])
 
     class Meta:
         db_table='comments'
