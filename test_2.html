@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>IT 테스트</title>
+    <link rel="stylesheet" href="title.css">
+    <link rel="stylesheet" href="button.css">
+</head>
+
+<body>
+
+    <header class="page_header">
+       
+        <button class="back_btn" onclick="history.back();">←</button>
+
+        <div class="title">
+            <h1 class="main_title">직무 적성 테스트</h1>
+        </div>
+    </header>
+    <script>
+        // 질문 불러오기
+    async function loadQuestions() {
+        const res = await fetch("/quiz/questions/");  
+        const data = await res.json();
+        const container = document.getElementById("questions");
+
+        for (const [key, q] of Object.entries(data.questions)) {
+            const div = document.createElement("div");
+            div.classList.add("question-item");
+            div.innerHTML = `
+                <div class="question-text">${q.question}</div>
+                <div class="choice-group">
+                    <input type="radio" id="${key}-yes" name="${key}" value="예" required>
+                    <label for="${key}-yes">예</label>
+
+                    <input type="radio" id="${key}-no" name="${key}" value="아니오" required>
+                    <label for="${key}-no">아니오</label>
+                </div>
+            `;
+            container.appendChild(div);
+    }
+}
+
+        // 제출 처리
+        document.getElementById("quiz-form").onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = {};
+            formData.forEach((v, k) => data[k] = v);
+
+            const res = await fetch("/quiz/submit/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await res.json();
+
+            
+        
+   
+
+            // 결과 페이지로 이동
+            if (result.redirect_url) {
+                window.location.href = result.redirect_url;
+            } else {
+                alert("제출 실패: " + JSON.stringify(result));
+            }
+        }
+
+        loadQuestions();
+    </script>
+
+   <form id="quiz-form">
+        <div id="questions"></div>
+        <div class="submit_area">
+            <button type="submit" class="btn btn_big2">테스트 완료!</button>
+    </div>
+    </form> 
+
+    
+</body>
+</html>

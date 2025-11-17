@@ -1,0 +1,133 @@
+
+/*공통*/
+.btn {
+    padding:10px 16px;
+    font-weight:600;
+    border: 1px solid transparent; 
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-sizing: border-box
+}
+/*로그인,회원가입시 사용 버튼*/
+/*다음 버튼*/
+.btn_next {
+   
+    width: 200px;
+    min-height: 75px;
+    border-radius:30px;
+    background:#ffffff;
+    color: #0217C2;
+    font-size: 16px;
+    border-color: #0217c24d;
+
+}
+
+/*테스트 진행하기와 같은 큰 버튼*/
+.btn_big1 {
+    
+    width: 1000px;
+    min-height: 65px;
+    border-radius:33px;
+    background:#5d69b880;
+    color: #ffffff;
+    font-size: 30px;
+    border-color: #0217c280;
+
+}
+
+/*동일 사이즈 파란색 버튼*/
+.btn_big2 {
+    
+    width: 1000px;
+    min-height: 65px;
+    border-radius:33px;
+    background:#0217c2;
+    color: #ffffff;
+    font-size: 30px;
+    border-color: #0217c280;
+
+}
+
+
+/*게시판에서 사용되는 버튼*/
+
+/*내가 쓴글*/
+.btn_my {
+    
+    width: 260px;
+    min-height: 38px;
+    border-radius:10px;
+    background:#0217C208;
+    color: #000000;
+    font-size: 16px;
+    border-color: #0217c280;
+
+}
+/*내 정보*/
+.btn_my1 {
+    
+    width: 122px;
+    min-height: 38px;
+    border-radius:10px;
+    background:#0217C208;
+    color: #000000;
+    font-size: 16px;
+    border-color: #0217c280;
+
+}
+
+/*공지사항*/
+.btn_my2 {
+    
+    width: 260px;
+    min-height: 48px;
+    border-radius:10px;
+    background:#ffffff;
+    color: #000000;
+    font-size: 16px;
+    border-color: #000000;
+
+}
+
+
+
+
+/*높이*/
+.btn_h75 {min-height:75px;}
+.btn_h40 {min-height:40px;}
+
+
+/*길이*/
+.btn_w150 { width:150px;}
+.btn_w250 {width:300px;}
+.btn_w600 {width:600px;}
+.btn_w700 {width:700px;}
+
+/*모서리*/
+.btn_round {border-radius:30px;}
+.btn_square{border-radius:10px;}
+
+/*모서리 색상*/
+.btn_blue50{border-color: #0217c280;} /*50%투명도*/
+.btn_blue30{border-color: #0217c24d;} /*30%투명도*/
+
+
+/* 백그라운드 색상*/
+.btn_b0{background:#0217c2;}/*기본*/
+.btn_b1{background:#0217C208;}/*3%*/
+.btn_b2{background:#0217C219;}/*10%*/
+.btn_b3{background:#0217c280;}/*50%*/
+.btn_white{background:#ffffff;}
+
+/*글씨*/
+/*글씨 컬러*/
+.btn_text_blue {color: #0217C2;}
+.btn_text_black {color: #000000;}
+.btn_text_white{color: #ffffff;}
+
+/*글씨 사이즈*/
+.btn_small {font-size: 16px; }
+.btn_big {font-size: 30px; }
+

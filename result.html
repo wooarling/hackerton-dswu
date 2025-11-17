@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>IT 테스트 결과</title>
+    <link rel="stylesheet" href="button.css">
+    <link rel="stylesheet" href="result.css">
+
+</head>
+<body>
+    <div class="container">
+        <div class="r">
+        <h1>직무 적성 테스트가 완료되었습니다!</h1>
+        </div>
+        <div class="e">
+            {% if best_fields %}
+                <p>당신에게 가장 잘 어울리는 직무는 
+                    {% for field in best_fields %}
+                        "{{ field }}"{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                    입니다.
+                </p>
+            {% else %}
+                <p>선택된 분야가 없습니다.</p>
+            {% endif %}
+        </div>
+
+        
+            <div class="score">
+
+            <h2><분야별 점수></h2>
+            <ul>
+                {% for field, score in request.session.scores.items %}
+                    <li>{{ field }}: {{ score }}점</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <button class="btn btn_big2">게시판 이동</button>
+        <a href="{% url 'test_page' %}">다시 테스트하기</a>
+        <h1>게시판으로 이동해서 재직자들과 소통해보세요!</h1>
+    </div>
+</body>
+</html>
