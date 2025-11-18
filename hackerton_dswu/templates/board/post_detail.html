@@ -1,7 +1,5 @@
-<!-- templates/board/post_detail.html -->
-
 <h2>{{ post.title }}</h2>
-<p>작성자: {{ post.user.username }} | 카테고리: {{ post.get_category_display }} | 좋아요: {{ post.likes.count }}</p>
+<p>작성자: {{ post.user.username }} | 카테고리: {{ post.get_category_display }} | 좋아요: {{ post.like_count }}</p>
 <p>{{ post.content }}</p>
 
 {% if user == post.user %}
@@ -22,6 +20,63 @@
         <button type="submit">좋아요</button>
     {% endif %}
 </form>
+
+<br><br>
+
+<!-- 댓글 작성 폼 -->
+<h3>댓글</h3>
+<form action="{% url 'board:comment_create' post_pk=post.pk %}" method="post">
+    {% csrf_token %}
+    <textarea name="content" placeholder="댓글을 작성하세요..." required></textarea><br>
+    <button type="submit">댓글 작성</button>
+</form>
+
+<!-- 댓글 목록 -->
+{% for comment in comments %}
+    <div style="margin-bottom: 20px;">
+        <p><strong>{{ comment.user.username }}</strong>: {{ comment.content }} (좋아요: {{ comment.like_count }})</p>
+        <p>작성일: {{ comment.created_at|date:"Y년 m월 d일 H:i" }}</p> <!-- 댓글 작성일자 표시 -->
+
+        <!-- 댓글 좋아요 토글 -->
+        <form action="{% url 'board:comment_like_toggle' comment.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            {% if user in comment.likes.all %}
+                <button type="submit">댓글 좋아요 취소</button>
+            {% else %}
+                <button type="submit">댓글 좋아요</button>
+            {% endif %}
+        </form>
+
+        <!-- 대댓글 작성 폼 -->
+        <form action="{% url 'board:comment_create' post_pk=post.pk parent_pk=comment.pk %}" method="post">
+            {% csrf_token %}
+            <textarea name="content" placeholder="대댓글을 작성하세요..." required></textarea><br>
+            <button type="submit">대댓글 작성</button>
+        </form>
+
+        <!-- 대댓글 목록 -->
+        {% for reply in comment.replies.all %}
+            <div style="margin-left: 20px;">
+                <p><strong>{{ reply.user.username }}</strong>: {{ reply.content }} (좋아요: {{ reply.like_count }})</p>
+                <p>작성일: {{ reply.created_at|date:"Y년 m월 d일 H:i" }}</p> <!-- 대댓글 작성일자 표시 -->
+
+                <!-- 대댓글 좋아요 토글 -->
+                <form action="{% url 'board:comment_like_toggle' reply.pk %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    {% if user in reply.likes.all %}
+                        <button type="submit">대댓글 좋아요 취소</button>
+                    {% else %}
+                        <button type="submit">대댓글 좋아요</button>
+                    {% endif %}
+                </form>
+            </div>
+        {% empty %}
+            <p>대댓글이 없습니다.</p>
+        {% endfor %}
+    </div>
+{% empty %}
+    <p>댓글이 없습니다.</p>
+{% endfor %}
 
 <br><br>
 <!-- 목록으로 돌아가기 -->

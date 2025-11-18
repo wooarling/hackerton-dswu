@@ -1,3 +1,4 @@
+<!-- board/post_list.html -->
 <h1>게시글 목록</h1>
 
 {% if request.user.is_authenticated %}
@@ -10,10 +11,26 @@
     <p><a href="{% url 'accounts:login_page' %}">로그인</a></p>
 {% endif %}
 
+<!-- 카테고리별 링크 -->
+<div>
+    <a href="{% url 'board:post_list_category' category='frontend' %}">프론트엔드</a> |
+    <a href="{% url 'board:post_list_category' category='backend' %}">백엔드</a> |
+    <a href="{% url 'board:post_list_category' category='ai' %}">인공지능</a> |
+    <a href="{% url 'board:post_list_category' category='iot' %}">사물인터넷</a> |
+    <a href="{% url 'board:post_list_category' category='game' %}">게임</a> |
+    <a href="{% url 'board:post_list_category' category='bigdata' %}">빅데이터</a>
+</div>
+
+{% if category %}
+  <h2>{{ category }} 게시판</h2>
+{% else %}
+  <h2>전체 게시판</h2>
+{% endif %}
+
 <!-- IT 테스트 링크 추가 -->
 <p><a href="{% url 'it_test:main_page' %}">IT 테스트 시작</a></p>
-
 <ul>
+    
 {% for post in posts %}
     <li>
         <a href="{% url 'board:post_detail' post.pk %}">{{ post.title }}</a>
