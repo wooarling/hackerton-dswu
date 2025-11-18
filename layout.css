@@ -330,3 +330,40 @@
 }
 
 
+/*게시글 목록 카드 형태*/
+
+
+.post-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.post-category {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #93939312;
+  padding: 4px 10px;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  color: #0217C280;
+  margin-bottom: 3px;
+}
+.post-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #000496;
+  margin-bottom: 6px;
+}
+.post-content {
+  font-size: 10px;
+  color: #0217C260;
+  margin-bottom: 10px;
+}
+.post-meta {
+  font-size: 13px;
+  color: #888;
+  display: flex;
+  gap: 10px;
+}
