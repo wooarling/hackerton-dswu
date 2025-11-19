@@ -1,0 +1,72 @@
+
+
+/*t수정*/
+
+.content-area {
+  display: flex;
+  justify-content: center; /* 가로 중앙 */
+  align-items: flex-start;     /* 세로 중앙 */
+  min-height: 100vh;       /* 화면 전체 높이 */
+  padding-top: 50px;
+      
+  box-sizing: border-box;
+ 
+
+}
+/*삭제*/
+#delete-post-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+}
+/* 수정 폼 */
+#edit-post-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+}
+
+
+/* 타이틀 중앙 정렬 */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* 라벨, 입력창 스타일 */
+label {
+  display: block;
+  margin-top: 20px;
+  font-weight: bold;
+}
+#edit-post-form input,
+#edit-post-form textarea,
+#edit-post-form button 
+
+{
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+/* 버튼 스타일 */
+button {
+  margin-top: 15px;
+  background-color: #0217c2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #0217f0;
+}
