@@ -1,12 +1,20 @@
 <h2>게시글 수정</h2>
 <form method="post">
     {% csrf_token %}
+    
     <label>제목:</label>
     <input type="text" name="title" value="{{ post.title }}"><br><br>
     
     <label>내용:</label><br>
     <textarea name="content" rows="10" cols="50">{{ post.content }}</textarea><br><br>
-    
+
+    <!-- 익명 여부 체크박스 -->
+    <label>
+        <input type="checkbox" name="is_anonymous" {% if post.is_anonymous %}checked{% endif %}>
+        익명으로 작성
+    </label><br><br>
+
     <button type="submit">저장</button>
 </form>
+
 <a href="{% url 'board:post_detail' post.pk %}">취소</a>

@@ -3,15 +3,89 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IT 테스트 결과</title>
-    <link rel="stylesheet" href="{% static 'it_test/button.css' %}">
-    <link rel="stylesheet" href="{% static 'it_test/result.css' %}">
+    
+    <style>
+    /* ================= 공통 ================= */
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column; 
+      align-items: center;   
+      justify-content: flex-end;  
+      height: 100%;
+      padding: 30px 20px; 
+      box-sizing: border-box;
+    }
+
+    .r {
+        font-size: 30px;      
+        color: #0217c2;       
+        font-weight: bold;    
+        margin-bottom: 10px;   
+        text-align: center;
+    }
+
+    .e {
+        font-size: 20px;       
+        color: #0217c2;        
+        font-weight: normal;
+        text-align: center;
+    }
+
+    .score{
+        font-size: 15px;       
+        color: #434d96;        
+        font-weight: normal;
+        text-align: center;
+    }
+
+    h1{
+        font-size: 30px;       
+        color: #0217c2;        
+        font-weight: normal;
+        text-align: center;
+    }
+
+    /* ================= 버튼 ================= */
+    .btn {
+        padding:10px 16px;
+        font-weight:600;
+        border: 1px solid transparent; 
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .btn_big2 {
+        width: 1000px;
+        min-height: 65px;
+        border-radius:33px;
+        background:#0217c2;
+        color: #ffffff;
+        font-size: 30px;
+        border-color: #0217c280;
+        margin-top: auto;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    /* 필요하면 다른 버튼 클래스들도 여기에 넣을 수 있음 */
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="r">
             <h1>직무 적성 테스트가 완료되었습니다!</h1>
         </div>
+
         <div class="e">
             {% if best_fields %}
                 <p>당신에게 가장 잘 어울리는 직무는 
@@ -24,6 +98,7 @@
                 <p>선택된 분야가 없습니다.</p>
             {% endif %}
         </div>
+
         <div class="score">
             <h2>분야별 점수</h2>
             <ul>
@@ -32,10 +107,9 @@
                 {% endfor %}
             </ul>
         </div>
-        <div class="actions">
-             <a href="{% url 'it_test:main_page' %}" class="btn btn_big2">다시 테스트하기</a>>
-           
 
+        <div class="actions">
+            <a href="{% url 'it_test:main_page' %}" class="btn btn_big2">다시 테스트하기</a>
             <h1>게시판으로 이동해서 재직자들과 소통해보세요!</h1>
         </div>
     </div>

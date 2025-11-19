@@ -1,42 +1,103 @@
-<!-- board/post_list.html -->
-<h1>게시글 목록</h1>
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시판</title>
+    <link rel="stylesheet" href="{% static 'css/header.css' %}">
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="layout-header">
+        <div class="header_logo">LOGO</div>
 
-{% if request.user.is_authenticated %}
-    <p>
-        {{ request.user.username }}님 환영합니다! |
-        <a href="{% url 'accounts:logout' %}">로그아웃</a>
-    </p>
-    <p><a href="{% url 'board:post_create' %}">새 글 작성</a></p>
-{% else %}
-    <p><a href="{% url 'accounts:login_page' %}">로그인</a></p>
-{% endif %}
+        <!-- 검색창 -->
+        <div class="header-center">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="검색어를 입력해주세요.">
+                <button id="searchBtn" aria-label="검색">
+                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24.5 26.25L16.625 18.375C16 18.875 15.2812 19.2708 14.4688 19.5625C13.6562 19.8542 12.7917 20 11.875 20C9.60417 20 7.68229 19.2135 6.10938 17.6406C4.53646 16.0677 3.75 14.1458 3.75 11.875C3.75 9.60417 4.53646 7.68229 6.10938 6.10938C7.68229 4.53646 9.60417 3.75 11.875 3.75C14.1458 3.75 16.0677 4.53646 17.6406 6.10938C19.2135 7.68229 20 9.60417 20 11.875C20 12.7917 19.8542 13.6562 19.5625 14.4688C19.2708 15.2812 18.875 16 18.375 16.625L26.25 24.5L24.5 26.25ZM11.875 17.5C13.4375 17.5 14.7656 16.9531 15.8594 15.8594C16.9531 14.7656 17.5 13.4375 17.5 11.875C17.5 10.3125 16.9531 8.98438 15.8594 7.89062C14.7656 6.79688 13.4375 6.25 11.875 6.25C10.3125 6.25 8.98438 6.79688 7.89062 7.89062C6.79688 8.98438 6.25 10.3125 6.25 11.875C6.25 13.4375 6.79688 14.7656 7.89062 15.8594C8.98438 16.9531 10.3125 17.5 11.875 17.5Z" fill="#0217C2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
 
-<!-- 카테고리별 링크 -->
-<div>
-    <a href="{% url 'board:post_list_category' category='frontend' %}">프론트엔드</a> |
-    <a href="{% url 'board:post_list_category' category='backend' %}">백엔드</a> |
-    <a href="{% url 'board:post_list_category' category='ai' %}">인공지능</a> |
-    <a href="{% url 'board:post_list_category' category='iot' %}">사물인터넷</a> |
-    <a href="{% url 'board:post_list_category' category='game' %}">게임</a> |
-    <a href="{% url 'board:post_list_category' category='bigdata' %}">빅데이터</a>
-</div>
+        <!-- 로그인 상태 표시 -->
+        <div class="header-user">
+        {% if request.user.is_authenticated %}
+            {{ request.user.username }}님 환영합니다! |
+            <a href="{% url 'accounts:logout' %}">로그아웃</a> |
+        {% else %}
+            <a href="{% url 'accounts:login_page' %}">로그인</a>
+        {% endif %}
+        </div>
+    </header>
 
-{% if category %}
-  <h2>{{ category }} 게시판</h2>
-{% else %}
-  <h2>전체 게시판</h2>
-{% endif %}
+    <div class="layout-body">
+        <!-- 왼쪽 사이드바 -->
+        <nav class="layout-sidebar">
+            <nav class="header_menu_area">
+                <!-- 메인화면 링크 삭제 -->
+                <a href="{% url 'board:followed_posts' %}" class="header_menu_item">팔로우한 글</a>
+                <a href="{% url 'board:popular_posts' %}" class="header_menu_item">현재 인기글</a>
+            </nav>
 
-<!-- IT 테스트 링크 추가 -->
-<p><a href="{% url 'it_test:main_page' %}">IT 테스트 시작</a></p>
-<ul>
-    
-{% for post in posts %}
-    <li>
-        <a href="{% url 'board:post_detail' post.pk %}">{{ post.title }}</a>
-        - 작성자: {{ post.user.username }} | 카테고리: {{ post.get_category_display }} | 좋아요: {{ post.likes.count }}
-    </li>
-{% empty %}
-    <li>게시글이 없습니다.</li>
-{% endfor %}
-</ul>
+            <br><div class="menu-divider"></div>
+
+            <nav class="board-menu">
+                <li><a href="{% url 'board:post_list_category' category='frontend' %}" class="board-link">> 프론트엔드 게시판</a></li>
+                <li><a href="{% url 'board:post_list_category' category='game' %}" class="board-link">> 게임 개발 게시판</a></li>
+                <li><a href="{% url 'board:post_list_category' category='iot' %}" class="board-link">> 사물인터넷 게시판</a></li>
+                <li><a href="{% url 'board:post_list_category' category='bigdata' %}" class="board-link">> 빅데이터 게시판</a></li>
+                <li><a href="{% url 'board:post_list_category' category='ai' %}" class="board-link">> 인공지능 게시판</a></li>
+            </nav>
+
+            <br><br>
+            <div class="sidebar-bottom">
+                <a href="{% url 'it_test:main_page' %}" class="bottom-button">
+                    <span class="text">📄 직무 적성 테스트 하러 가기 ➔</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="layout-content">
+            <div class="board-header">
+                <h1>
+                    {% if category %}
+                        {{ category }} 게시판
+                    {% else %}
+                        전체 게시판
+                    {% endif %}
+                </h1>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'board:post_create' %}" class="write-button">새 글 작성</a>
+                {% endif %}
+            </div>
+
+            <div id="board-list">
+                {% if posts %}
+                    <ul>
+                        {% for post in posts %}
+                            <li>
+                                <a href="{% url 'board:post_detail' post.pk %}">{{ post.title }}</a>
+                                - 작성자: {% if post.is_anonymous %}익명{% else %}{{ post.user.username }}{% endif %}
+                                | 카테고리: {{ post.get_category_display }}
+                                | 좋아요: {{ post.likes.count }}
+                                | 댓글: {{ post.comment_set.count }}
+                                | 작성일: {{ post.date|date:"Y-m-d H:i" }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>게시글이 없습니다.</p>
+                {% endif %}
+            </div>
+        </main>
+    </div>
+</body>
+</html>
+
