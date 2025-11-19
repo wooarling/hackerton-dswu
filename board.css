@@ -1,0 +1,77 @@
+/*게시판 */
+
+  .board-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+  }
+
+/*게시판 이름 + 새글 작성 버튼*/
+
+  .postname-header {
+  max-width: 1000px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #fff;
+}
+
+.write-button {
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 15px;
+  gap: 6px;
+  background-color: #0217C203;
+  border: 1px solid #ddd;
+  color: #000050;
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.write-button:hover {
+  background-color: #f3eaff;
+}
+
+/*******************게시글 목록 카드 형태***********************/
+
+
+.post-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.post-category {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #93939312;
+  padding: 4px 10px;
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  color: #0217C280;
+  margin-bottom: 3px;
+}
+.post-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #000496;
+  margin-bottom: 6px;
+}
+.post-content {
+  font-size: 10px;
+  color: #0217C260;
+  margin-bottom: 10px;
+}
+.post-meta {
+  font-size: 13px;
+  color: #888;
+  display: flex;
+  gap: 10px;
+}
