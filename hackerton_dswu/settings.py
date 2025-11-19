@@ -122,8 +122,9 @@ USE_TZ = True
 # 정적 파일(CSS, JS, 이미지) 설정
 # -----------------------------
 STATIC_URL = '/static/'
+
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),  # 프로젝트 루트 /static 폴더
+    os.path.join(BASE_DIR, "hackerton_dswu", "static"),
 ]
 
 # -----------------------------

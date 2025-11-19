@@ -3,13 +3,13 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User
 
-# 회원가입용 시리얼라이저
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email']
+        # 회원가입에 필요한 모든 필드 포함
+        fields = ['username', 'password', 'email', 'name', 'nickname', 'phone', 'gender', 'birth_date']
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
@@ -22,6 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
+        # create_user 메서드로 비밀번호를 해시 처리
         return User.objects.create_user(**validated_data)
 
 

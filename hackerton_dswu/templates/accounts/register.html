@@ -1,46 +1,219 @@
-<h1>회원가입</h1>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>회원가입</title>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Pretendard', sans-serif;
+        background: #ffffff;
+    }
+
+    .header {
+        width: 100%;
+        background: #0217C2;
+        color: #fff;
+        font-size: 22px;
+        font-weight: 700;
+        padding: 18px 0;
+        text-align: center;
+        position: relative;
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #fff;
+        font-size: 30px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .container {
+        max-width: 1080px;
+        margin: 40px auto;
+        display: flex;
+        gap: 60px;
+        justify-content: center;
+    }
+
+    .form-column {
+        width: 100%;
+        max-width: 480px;
+    }
+
+    .form-column label {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0217C2;
+        display: block;
+        margin-bottom: 6px;
+        margin-top: 18px;
+    }
+
+    input, select {
+        width: 100%;
+        height: 48px;
+        padding: 0 14px;
+        font-size: 14px;
+        border: 1.4px solid #D2D2D2;
+        border-radius: 12px;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    input::placeholder {
+        color: #A8A8A8;
+    }
+
+    select {
+        appearance: none;
+        background: url("data:image/svg+xml;utf8,<svg fill='%230217C2' height='16' viewBox='0 0 24 24' width='16' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 12px center;
+        background-size: 14px;
+    }
+
+    .email-select-row {
+        display: flex;
+        gap: 10px;
+    }
+    .email-select-row input {
+        width: 100%;
+    }
+
+    .birth-row {
+        display: flex;
+        gap: 10px;
+    }
+    .birth-row select {
+        width: 33%;
+    }
+
+    .next-btn-wrapper {
+        width: 1080px;
+        margin: 40px auto;
+        text-align: right;
+    }
+
+    .next-btn {
+        background: #0217C2;
+        color: #fff;
+        font-size: 22px;
+        font-weight: 700;
+        border: none;
+        border-radius: 16px;
+        padding: 16px 32px;
+        cursor: pointer;
+    }
+</style>
+
+</head>
+<body>
+
+<div class="header">
+    <a href="javascript:history.back()" class="back-btn">◀</a>
+    회원가입
+</div>
 
 <form method="post" action="{% url 'accounts:register_page' %}">
     {% csrf_token %}
-    <p>
-        <label>아이디:</label>
-        <input type="text" name="username" required>
-    </p>
-    <p>
-        <label>비밀번호:</label>
-        <input type="password" name="password" required>
-    </p>
-    <p>
-        <label>이름:</label>
-        <input type="text" name="name">
-    </p>
-    <p>
-        <label>닉네임:</label>
-        <input type="text" name="nickname">
-    </p>
-    <p>
-        <label>전화번호:</label>
-        <input type="text" name="phone">
-    </p>
-    <p>
-        <label>성별:</label>
-        <select name="gender">
-            <option value="">선택</option>
-            <option value="male">남성</option>
-            <option value="female">여성</option>
-        </select>
-    </p>
-    <p>
-        <label>이메일:</label>
-        <input type="email" name="email">
-    </p>
-    <p>
-        <label>생년월일:</label>
-        <input type="date" name="birth_date">
-    </p>
 
-    <button type="submit">회원가입</button>
+    <div class="container">
+
+        <div class="form-column">
+            <label>아이디</label>
+            <input type="text" name="username" placeholder="아이디 입력" required>
+
+            <label>비밀번호</label>
+            <input type="password" name="password" placeholder="비밀번호 입력" required>
+
+            <label>이름</label>
+            <input type="text" name="name" placeholder="이름을 입력해 주세요">
+
+            <label>닉네임</label>
+            <input type="text" name="nickname" placeholder="닉네임을 입력해 주세요">
+        </div>
+
+        <div class="form-column">
+            <label>전화번호</label>
+            <input type="text" name="phone" placeholder="휴대폰 번호 입력 (‘-’ 제외 11자리 입력)">
+
+            <label>이메일 주소</label>
+            <div class="email-select-row">
+                <input type="email" name="email" placeholder="이메일 주소">
+            </div>
+
+            <label>생년월일</label>
+            <div class="birth-row">
+                <select name="birth_year" id="birth_year"><option value="">년도</option></select>
+                <select name="birth_month" id="birth_month"><option value="">월</option></select>
+                <select name="birth_day" id="birth_day"><option value="">일</option></select>
+            </div>
+
+            <label>성별</label>
+            <select name="gender">
+                <option value="">선택</option>
+                <option value="male">남성</option>
+                <option value="female">여성</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="next-btn-wrapper">
+        <!-- 여기서 type="submit"으로 변경 -->
+        <button type="submit" class="next-btn">
+            다음 ▶
+        </button>
+    </div>
+
 </form>
 
-<p>이미 계정이 있나요? <a href="{% url 'accounts:login_page' %}">로그인</a></p>
+<script>
+    // 생년월일 옵션 채우기
+    const yearSelect = document.getElementById('birth_year');
+    const monthSelect = document.getElementById('birth_month');
+    const daySelect = document.getElementById('birth_day');
 
+    const currentYear = new Date().getFullYear();
+    for (let y = currentYear; y >= 1950; y--) {
+        const option = document.createElement('option');
+        option.value = y;
+        option.text = y;
+        yearSelect.add(option);
+    }
+
+    for (let m = 1; m <= 12; m++) {
+        const option = document.createElement('option');
+        option.value = m;
+        option.text = m;
+        monthSelect.add(option);
+    }
+
+    function updateDays() {
+        const year = parseInt(yearSelect.value);
+        const month = parseInt(monthSelect.value);
+        let days = 31;
+        if (!isNaN(year) && !isNaN(month)) {
+            if ([4,6,9,11].includes(month)) days = 30;
+            else if (month === 2) days = (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) ? 29 : 28;
+        }
+        daySelect.innerHTML = '<option value="">일</option>';
+        for (let d = 1; d <= days; d++) {
+            const option = document.createElement('option');
+            option.value = d;
+            option.text = d;
+            daySelect.add(option);
+        }
+    }
+
+    yearSelect.addEventListener('change', updateDays);
+    monthSelect.addEventListener('change', updateDays);
+</script>
+
+</body>
+</html>

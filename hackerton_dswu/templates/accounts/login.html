@@ -1,22 +1,158 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로그인</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', sans-serif;
+            background: white;
+        }
+
+        .container {
+            max-width: 460px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        /* 상단 사이트명 박스 */
+        .logo-box {
+            width: 280px;
+            margin: 0 auto;
+            padding: 35px 0;
+            background: #0026CC;
+            border-radius: 30px;
+            margin-top: 20px;
+            
+        }
+
+        .logo-box h1 {
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .subtitle {
+            margin-top: 40px;
+            font-size: 15px;
+            color: #555;
+        }
+
+        .login-form {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.login-form input {
+    width: 100%;
+    height: 48px;
+    padding: 0 14px;
+    border: 1.4px solid #D2D2D2;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    box-sizing: border-box;  /* 이거 매우 중요: padding 포함한 정확한 width 계산 */
+}
+
+/* 비밀번호 input 감싸는 영역 */
+.password-row {
+    position: relative;
+    width: 100%;
+}
+
+/* 비밀번호 input */
+.password-row input {
+    padding-right: 60px;  /* 링크 영역 확보만 */
+}
+
+/* 비밀번호 찾기 링크 */
+.find-password {
+    position: absolute;
+    right: 12px;
+    top: 40%;
+    transform: translateY(-50%);
+    font-size: 13px;
+    color: #7F7F7F;
+}
+
+
+        .login-btn {
+            width: 100%;
+            height: 52px;
+            background: #0026CC;
+            border: none;
+            border-radius: 25px;
+            margin-top: 10px;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .register-text {
+            font-size: 14px;
+            margin-top: 20px;
+            color: #505050;
+        }
+
+        .register-link {
+            font-weight: 600;
+            color: #0026CC;
+        }
+
+        .divider {
+            margin: 28px auto;
+            width: 70%;
+            border: none;
+            border-top: 1px solid #d9d9d9;
+        }
+
+
+    </style>
 </head>
+
 <body>
-    <h2>로그인</h2>
-    <form method="post" action="{% url 'accounts:login_page' %}">
+
+<div class="container">
+
+    <!-- 상단 사이트명 박스 -->
+    <div class="logo-box">
+        <h1>CONEXT</h1>
+    </div>
+
+    <p class="subtitle">로그인하고 다양한 혜택을 받아보세요!</p>
+
+    <form method="post" action="{% url 'accounts:login_page' %}" class="login-form">
         {% csrf_token %}
-        <label for="username">아이디:</label>
-        <input type="text" id="username" name="username" required><br><br>
 
-        <label for="password">비밀번호:</label>
-        <input type="password" id="password" name="password" required><br><br>
+        <input type="text" name="username" placeholder="아이디" required>
 
-        <button type="submit">로그인</button>
+        <div class="password-row">
+            <input type="password" name="password" placeholder="비밀번호" required>
+            <a href="#" class="find-password">비밀번호를 잊었나요?</a>
+        </div>
+
+        <button type="submit" class="login-btn">로그인</button>
     </form>
 
-    <p>계정이 없으면 <a href="{% url 'accounts:register_page' %}">회원가입</a>하세요.</p>
+    <p class="register-text">
+        CONEXT가 처음이신가요?
+        <a href="{% url 'accounts:register_page' %}" class="register-link">회원가입</a>
+    </p>
+
+    <hr class="divider">
+
+</div>
+
 </body>
 </html>

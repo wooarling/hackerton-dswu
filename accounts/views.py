@@ -14,7 +14,27 @@ from .serializers import UserSerializer, MyTokenObtainPairSerializer
 # HTML 렌더링
 # -----------------------------
 def register_page(request):
+    if request.method == 'POST':
+        data = {
+            'username': request.POST.get('username'),
+            'password': request.POST.get('password'),
+            'name': request.POST.get('name'),
+            'nickname': request.POST.get('nickname'),
+            'phone': request.POST.get('phone'),
+            'gender': request.POST.get('gender'),
+            'email': request.POST.get('email'),
+            'birth_date': f"{request.POST.get('birth_year')}-{request.POST.get('birth_month').zfill(2)}-{request.POST.get('birth_day').zfill(2)}"
+        }
+
+        serializer = UserSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return redirect('accounts:login_page')
+        else:
+            return render(request, 'accounts/register.html', {'errors': serializer.errors})
+
     return render(request, 'accounts/register.html')
+
 
 def login_page(request):
     if request.method == 'POST':
@@ -45,7 +65,18 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
+        # HTML form 제출인지 JSON 요청인지 체크
         if request.content_type != 'application/json':
+            # HTML form에서 연/월/일 따로 받음
+            year = request.POST.get('birth_year')
+            month = request.POST.get('birth_month')
+            day = request.POST.get('birth_day')
+
+            if year and month and day:
+                birth_date = f"{year}-{int(month):02d}-{int(day):02d}"
+            else:
+                birth_date = None
+
             data = {
                 'username': request.POST.get('username'),
                 'password': request.POST.get('password'),
@@ -54,15 +85,17 @@ class RegisterView(generics.CreateAPIView):
                 'phone': request.POST.get('phone'),
                 'gender': request.POST.get('gender'),
                 'email': request.POST.get('email'),
-                'birth_date': request.POST.get('birth_date'),
+                'birth_date': birth_date,
             }
         else:
+            # JSON 요청일 경우 그대로 사용
             data = request.data
 
         serializer = self.get_serializer(data=data)
         if serializer.is_valid():
             serializer.save()
             if request.content_type != 'application/json':
+                # HTML form 제출이면 바로 로그인 페이지로 이동
                 return redirect('accounts:login_page')
             return Response({"message": "회원가입 성공"}, status=201)
         return Response(serializer.errors, status=400)
