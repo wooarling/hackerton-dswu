@@ -101,15 +101,6 @@
             <span>작성일: {{ comment.created_at|date:"Y-m-d H:i" }}</span>
         </div>
 
-        <!-- 댓글 좋아요 토글 -->
-        <form action="{% url 'board:comment_like_toggle' comment.pk %}" method="post" style="margin-top:8px;">
-            {% csrf_token %}
-            {% if user in comment.likes.all %}
-                <button type="submit">좋아요 취소</button>
-            {% else %}
-                <button type="submit">좋아요</button>
-            {% endif %}
-        </form>
     </div>
     {% endfor %}
 {% else %}
@@ -117,4 +108,5 @@
 {% endif %}
 
 {% endblock %}
+
 
