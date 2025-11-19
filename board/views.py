@@ -92,7 +92,7 @@ def post_create(request):
         category = request.POST.get('category')
         is_anonymous = bool(request.POST.get('is_anonymous'))  # 체크박스 처리
 
-        if not title or not content:    #유효성 검사 추가
+        if not title.strip() or not content.strip():    #유효성 검사 추가
             return render(request,'board/post_create.html',{
                 'error':'제목과 내용을 입력하세요.'
             })
@@ -171,6 +171,9 @@ def comment_create(request, post_pk, parent_pk=None):
     if request.method == 'POST':
         content = request.POST.get('content')
         is_anonymous = bool(request.POST.get('is_anonymous'))  # 체크박스 처리
+
+        # if not content:    #내용 필수
+        #     return render('board:post_detail', pk=post.pk)
 
         Comment.objects.create(
             post=post,
