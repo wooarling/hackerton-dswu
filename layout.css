@@ -189,7 +189,7 @@
 
 /*게시판 이름 + 새글 작성 버튼*/
 
-  .board-header {
+  .postname-header {
   max-width: 1000px;
   display: flex;
   justify-content: space-between;
@@ -199,9 +199,10 @@
 }
 
 .write-button {
+  right: 0;
   display: inline-flex;
   align-items: center;
-   min-height: 15px;
+  min-height: 15px;
   gap: 6px;
   background-color: #0217C203;
   border: 1px solid #ddd;
@@ -366,4 +367,196 @@
   color: #888;
   display: flex;
   gap: 10px;
+}
+
+
+
+/*board_detail 게시판 상세페이지 적용 css*/
+
+.board-detail {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 24px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #fff;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.board-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.board-category {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+ /* 수정, 삭제 버튼*/
+.edit-button {        
+  position: absolute;
+  right: 30;
+  padding: 5px 20px;
+  background-color: #0217C203;
+  color: #000050;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.edit-button:hover {
+  background-color: #0217C210;
+}
+.delete-button {        
+  position: absolute;
+  right: 0;
+  padding: 5px 20px;
+  background-color: #0217C203;
+  color: #000050;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.delete-button:hover {
+  background-color: #0217C210;
+}
+
+.board-body {
+  width: 100%;
+  padding: 20px 0;
+  box-sizing: border-box;
+}
+
+.board-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #000496;
+  margin-bottom: 20px;
+}
+
+.board-content {
+  font-size: 16px;
+  color: #0217C260;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.board-footer {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #666;
+}
+.board-meta {
+  font-size: 13px;
+  color: #888;
+  display: flex;
+  gap: 10px;
+}
+
+/*********댓글 박스********/
+
+/* 댓글 전체 박스 */
+.comment-item {
+  border-top: 1px solid #00000020;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+
+.comment-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+} 
+
+/* 작성자*/
+.comment-item .comment-author {
+  font-weight: bold;
+  font-size: 13px;
+  color: #0217C2;
+}
+
+/*좋아요 버튼, 댓글 버튼 영역 */
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 좋아요 버튼 */
+.comment-like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+  right: 30px;
+}
+/* 대댓글 버튼 */
+.reply-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  right: 0;
+}
+
+/* 댓글 내용 */
+.comment-item .comment-content {
+  margin: 4px 0;
+  font-size: 14px;
+  color: #444;
+  white-space: pre-wrap;
+}
+
+/*하단 영역*/
+.comment-bottom {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 6px;
+}
+
+/* 닐찌 */
+.comment-item .comment-date {
+  float: right;
+  font-size: 10px;
+  color: #0217C260;
+}
+
+/* 좋아요 수 표시 */
+.comment-like-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: #E4A3A3;
+}
+
+.comment-like-btn:hover {
+  transform: scale(1.1);
+}
+
+.comment-like-btn.liked svg path {
+  stroke: #E4A3A3;
+  fill: #E4A3A3;
+}
+
+
+.reply-btn:hover svg path {
+  stroke: #555;
 }
