@@ -1,62 +1,13 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>board_detail</title>
-    <link rel="stylesheet" href="header.css">
-    <link rel="stylesheet" href="layout.css" />
-    <link rel="stylesheet" href="profile.css">
-</head>
-<body>
-    <header class="layout-header">
-        <!--헤더영역-->
-    <div class="header_logo">LOGO </div>
-    <div class="header-center">
-    <div class="search-container">
-    <input type="text" id="searchInput" placeholder="검색어를 입력해주세요." />
-    <button id="searchBtn" aria-label="검색">
-      <!-- SVG 아이콘 삽입 -->
-      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24.5 26.25L16.625 18.375C16 18.875 15.2812 19.2708 14.4688 19.5625C13.6562 19.8542 12.7917 20 11.875 20C9.60417 20 7.68229 19.2135 6.10938 17.6406C4.53646 16.0677 3.75 14.1458 3.75 11.875C3.75 9.60417 4.53646 7.68229 6.10938 6.10938C7.68229 4.53646 9.60417 3.75 11.875 3.75C14.1458 3.75 16.0677 4.53646 17.6406 6.10938C19.2135 7.68229 20 9.60417 20 11.875C20 12.7917 19.8542 13.6562 19.5625 14.4688C19.2708 15.2812 18.875 16 18.375 16.625L26.25 24.5L24.5 26.25ZM11.875 17.5C13.4375 17.5 14.7656 16.9531 15.8594 15.8594C16.9531 14.7656 17.5 13.4375 17.5 11.875C17.5 10.3125 16.9531 8.98438 15.8594 7.89062C14.7656 6.79688 13.4375 6.25 11.875 6.25C10.3125 6.25 8.98438 6.79688 7.89062 7.89062C6.79688 8.98438 6.25 10.3125 6.25 11.875C6.25 13.4375 6.79688 14.7656 7.89062 15.8594C8.98438 16.9531 10.3125 17.5 11.875 17.5Z" fill="#0217C2"/>
-      </svg>
-    </button>
-    </div>
-    </div>
-    </div>
-  </header>
-  <div class="layout-body">
-    <nav class="layout-sidebar"> 
-        <!-- 왼쪽 메뉴 --> 
-        <nav class="header_menu_area">
-            <a href="index.html" class="header_menu_item">메인화면</a>
-            <a href="#" class="header_menu_item">팔로우한 글</a>
-            <a href="popular.html" class="header_menu_item">현재 인기글</a>
-        </nav>
+{% extends "base.html" %}
+{% load static %}
 
-        <br><div class="menu-divider"></div>
-        <!--게시판 메뉴-->
-        <nav class="board-menu">
-        <li><a href="frontend.html" class="board-link" data-board="frontend">> 프론트엔드 게시판</a> </li> 
-        <li><a href="backend.html" class="board-link" data-board="backend">> 백엔드 게시판</a> </li>       
-        <li><a href="#" class="board-link" data-board="game">> 게임 개발 게시판</a> </li>
-        <li><a href="#" class="board-link" data-board="iot">> 사물인터넷 게시판</a> </li>
-        <li><a href="#" class="board-link" data-board="bigdata">> 빅데이터 게시판</a> </li>
-        <li><a href="#" class="board-link" data-board="ai">> 인공지능 게시판</a> </li>
-      </nav>
-      <!--직무테스트 하러가기-->
-      <br><br>
-      <div class="sidebar-bottom">
-  <a href="#" class="bottom-button">
-    <span class="text">📄 직무 적성 테스트 하러 가기 ➔</span>
-    
-  </a>
-</div>
+{% block title %}게시글 상세보기{% endblock %}
 
-    </nav>
-    <main class="layout-content"> 
-        <!-- 여기에 페이지별 콘텐츠가 들어감 -->
-        <!-- 예: 게시판 제목, 글 목록 등 --> 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'board_detail.css' %}">
+{% endblock %}
+
+{% block content %}
         
   <!-----------게시판 상세페이지 글 ------------------------------------------------->
     <div class="board-detail">
@@ -348,32 +299,4 @@ commentList.scrollIntoView({ behavior: "smooth", block: "end" });
     </div>
   </div>
 
-
-
-    </main>
-
-    <aside class="layout-right"> 
-        <!-- 오른쪽 사용자 정보 영역 --> 
-          <div class="profile_header">
-                <div class="profile_image"></div>
-                <div class="profile_info">
-                    <div class="profile_name">홍길동</div>
-                    <div class="profile_id">@hong123</div>
-                </div>
-                <div class="profile_a">🔔</div>
-            </div>
-            <div class="profile_menu">
-                <button class="profile_menu_btn">내가 쓴 글</button>
-                <button class="profile_menu_btn">댓글 단 글</button>
-                <button class="profile_menu_btn">스크랩한 글</button>
-            </div>
-            <div class="profile_b">
-                <button class="profile_b_btn">내 정보</button>
-                <button class="profile_b_btn">로그아웃</button>
-            </div>
-    </aside>
-    
-  </div>
-
-</body>
-</html>
+   {% endblock %}
