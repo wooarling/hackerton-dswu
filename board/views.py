@@ -92,6 +92,11 @@ def post_create(request):
         category = request.POST.get('category')
         is_anonymous = bool(request.POST.get('is_anonymous'))  # 체크박스 처리
 
+        if not title or not content:    #유효성 검사 추가
+            return render(request,'board/post_create.html',{
+                'error':'제목과 내용을 입력하세요.'
+            })
+
         post = Post.objects.create(
             user=request.user,
             title=title,

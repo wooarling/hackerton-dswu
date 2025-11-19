@@ -1,11 +1,11 @@
-
 {% extends "base.html" %}
 
-{% block title %}내가 쓴 글{% endblock %}
+{% block title %}내가 쓴 댓글{% endblock %}
 
 {% block content %}
 
-<h1 class="page-title">📋 내가 쓴 글</h1>
+<h1 class="page-title">💬 내가 쓴 댓글</h1>
+
 <style>
 /* 카드 전체 스타일 */
 .post-card {
@@ -23,23 +23,23 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* 카테고리 */
+/* 댓글이 달린 게시글 제목 */
 .post-card-category {
     font-size: 12px;
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 6px;
-            background-color: #eef1ff;
-            color: #2f3ecf;
-            margin-bottom: 8px;
-            font-weight: 600;;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background-color: #eef1ff;
+    color: #2f3ecf;
+    margin-bottom: 8px;
+    font-weight: 600;
 }
 
-/* 제목 */
+/* 댓글 작성자 & 내용 */
 .post-card-title {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 600;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .post-card-title a {
@@ -51,63 +51,60 @@
     color: #007bff;
 }
 
-/* 작성자 & 좋아요 */
 .post-card p {
     font-size: 14px;
     color: #444;
     margin: 4px 0;
 }
 
-
 .post-card-info {
-   display: flex;
+    display: flex;
     gap: 18px;
     font-size: 13px;
     color: #7a7a7a;
 }
+
 .post-card-info span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
 </style>
 
-{% if posts %}
-    {% for post in posts %}
+{% if comments %}
+    {% for comment in comments %}
     <div class="post-card">
-
         <div class="post-card-category">
             {{ post.get_category_display }}
         </div>
-
-        <div class="post-card-title">
-            <a href="{% url 'board:post_detail' post.pk %}">
-                {{ post.title }}
+        <div class="post-card-category">
+            <댓글이 달린 글> 
+            <a href="{% url 'board:post_detail' comment.post.pk %}">
+                {{ comment.post.title }}
             </a>
         </div>
 
-        <p style="font-size: 14px;">
-            작성자: 
-            {% if post.is_anonymous %}
+        <div class="post-card-title">
+            {% if comment.is_anonymous %}
                 익명
             {% else %}
-                {{ post.user.username }}
+                {{ comment.user.username }}
             {% endif %}
-            | 좋아요: {{ post.like_count }}
+        </div>
+
+        <p>
+            {{ comment.content|truncatechars:120 }}
         </p>
 
-       
-
         <div class="post-card-info">
-            <span>👍 {{ post.like_count }}</span>
-            <span>💬 {{ post.comment_set.count }}</span>
-            <span>작성일: {{ post.date|date:"Y-m-d H:i" }}</span>
+            <span>👍 {{ comment.like_count }}</span>
+            <span>작성일: {{ comment.created_at|date:"Y-m-d H:i" }}</span>
         </div>
 
     </div>
     {% endfor %}
 {% else %}
-    <p>아직 작성한 글이 없습니다.</p>
+    <p>아직 작성한 댓글이 없습니다.</p>
 {% endif %}
 
 {% endblock %}

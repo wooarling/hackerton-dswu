@@ -47,9 +47,14 @@ def submit_test(request):
             question_id = int(key.lstrip('q'))
             question = Question.objects.get(id=question_id)
 
-            if answer.lower() in ["예", "yes", "y"]:
+            # 문자열 처리 수정
+            if isinstance(answer,str) and answer.strip().lower() in ["예", "yes", "y"]:
                 for field in question.fields.all():
                     scores[field.name] += 1
+
+            # if answer.lower() in ["예", "yes", "y"]:
+            #     for field in question.fields.all():
+            #         scores[field.name] += 1
 
         except (ValueError, Question.DoesNotExist):
             return JsonResponse({"error": f"질문 ID {key} 처리 실패"}, status=400)
