@@ -75,7 +75,10 @@
     {% for comment in comments %}
     <div class="post-card">
         <div class="post-card-category">
-            댓글이 달린 글: 
+            {{ post.get_category_display }}
+        </div>
+        <div class="post-card-category">
+            <댓글이 달린 글> 
             <a href="{% url 'board:post_detail' comment.post.pk %}">
                 {{ comment.post.title }}
             </a>
@@ -114,3 +117,4 @@
 {% endif %}
 
 {% endblock %}
+
