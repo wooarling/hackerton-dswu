@@ -1,0 +1,110 @@
+/*글쓰기 화면*/
+
+.form-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.back-button {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding-left: 10px;
+  cursor: pointer;
+}
+.submit-button {
+  position: absolute;
+  right: 0;
+  padding: 5px 20px;
+  background-color: #0217C203;
+  color: #000050;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.submit-button:hover {
+  background-color: #0217C210;
+}
+
+.form-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+
+
+
+.post-form {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.post-form input[type="text"],
+.post-form textarea {
+  
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ffffff;
+  border-radius: 6px;
+  background-color: #ffffff;
+}
+
+.post-form textarea {
+  min-height: 280px;
+  resize: none;
+}
+.post-form input[type="text"]:focus,
+.post-form textarea:focus {
+  outline: none; 
+}
+
+.post-form input[type="text"]::placeholder {
+  color: #00049650;       /* 제목 placeholder 색 */
+  font-size: 20px;   /* 제목 placeholder 크기 */
+  font-weight: bold;   
+}
+
+.post-form textarea::placeholder {
+  color: #0217C240;       /* 본문 placeholder 색 */
+  font-size: 14px;   /* 본문 placeholder 크기 */
+}
+
+.file-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-upload label {
+  font-weight: 500;
+  color: #333;
+}
+
+.anonymous-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+.post-form input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
