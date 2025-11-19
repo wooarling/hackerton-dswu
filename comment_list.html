@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}내가 쓴 댓글{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">💬 내가 쓴 댓글</h1>
+
+<style>
+/* 카드 전체 스타일 */
+.post-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 댓글이 달린 게시글 제목 */
+.post-card-category {
+    font-size: 12px;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background-color: #eef1ff;
+    color: #2f3ecf;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* 댓글 작성자 & 내용 */
+.post-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.post-card-title a {
+    text-decoration: none;
+    color: #000;
+}
+
+.post-card-title a:hover {
+    color: #007bff;
+}
+
+.post-card p {
+    font-size: 14px;
+    color: #444;
+    margin: 4px 0;
+}
+
+.post-card-info {
+    display: flex;
+    gap: 18px;
+    font-size: 13px;
+    color: #7a7a7a;
+}
+
+.post-card-info span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+</style>
+
+{% if comments %}
+    {% for comment in comments %}
+    <div class="post-card">
+        <div class="post-card-category">
+            댓글이 달린 글: 
+            <a href="{% url 'board:post_detail' comment.post.pk %}">
+                {{ comment.post.title }}
+            </a>
+        </div>
+
+        <div class="post-card-title">
+            {% if comment.is_anonymous %}
+                익명
+            {% else %}
+                {{ comment.user.username }}
+            {% endif %}
+        </div>
+
+        <p>
+            {{ comment.content|truncatechars:120 }}
+        </p>
+
+        <div class="post-card-info">
+            <span>👍 {{ comment.like_count }}</span>
+            <span>작성일: {{ comment.created_at|date:"Y-m-d H:i" }}</span>
+        </div>
+
+        <!-- 댓글 좋아요 토글 -->
+        <form action="{% url 'board:comment_like_toggle' comment.pk %}" method="post" style="margin-top:8px;">
+            {% csrf_token %}
+            {% if user in comment.likes.all %}
+                <button type="submit">좋아요 취소</button>
+            {% else %}
+                <button type="submit">좋아요</button>
+            {% endif %}
+        </form>
+    </div>
+    {% endfor %}
+{% else %}
+    <p>아직 작성한 댓글이 없습니다.</p>
+{% endif %}
+
+{% endblock %}
