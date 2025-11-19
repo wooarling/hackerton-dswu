@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}내가 스크랩한 글{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title">📌 내가 스크랩한 글</h1>
+
+<style>
+/* 카드 전체 스타일 */
+.post-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 카테고리 */
+.post-card-category {
+    font-size: 12px;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background-color: #eef1ff;
+    color: #2f3ecf;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* 제목 */
+.post-card-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.post-card-title a {
+    text-decoration: none;
+    color: #000;
+}
+
+.post-card-title a:hover {
+    color: #007bff;
+}
+
+/* 작성자 & 좋아요 */
+.post-card p {
+    font-size: 14px;
+    color: #444;
+    margin: 4px 0;
+}
+
+/* 카드 하단 정보 */
+.post-card-info {
+   display: flex;
+   gap: 18px;
+   font-size: 13px;
+   color: #7a7a7a;
+}
+
+.post-card-info span {
+   display: flex;
+   align-items: center;
+   gap: 4px;
+}
+
+.post-card form button {
+    margin-top: 8px;
+    padding: 4px 10px;
+    border: 1px solid #2f3ecf;
+    border-radius: 6px;
+    background-color: #eef1ff;
+    color: #2f3ecf;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.post-card form button:hover {
+    background-color: #dbe0ff;
+}
+</style>
+
+{% if scraps %}
+    {% for post in scraps %}
+    <div class="post-card">
+
+        <div class="post-card-category">
+            {{ post.get_category_display }}
+        </div>
+
+        <div class="post-card-title">
+            <a href="{% url 'board:post_detail' post.pk %}">
+                {{ post.title }}
+            </a>
+        </div>
+
+        <p>
+            작성자: 
+            {% if post.is_anonymous %}
+                익명
+            {% else %}
+                {{ post.user.username }}
+            {% endif %}
+            | 좋아요: {{ post.like_count }}
+        </p>
+
+        <div class="post-card-info">
+            <span>👍 {{ post.like_count }}</span>
+            <span>💬 {{ post.comment_set.count }}</span>
+            <span>{{ post.date|date:"Y-m-d H:i" }}</span>
+        </div>
+
+         <!-- 스크랩 토글 -->
+        <form action="{% url 'board:post_scrap_toggle' post.pk %}" method="post" style="display:inline;">
+            {% csrf_token %}
+            {% if user in post.scraps.all %}
+                <button type="submit">스크랩 취소</button>
+            {% else %}
+                <button type="submit">스크랩</button>
+            {% endif %}
+        </form>
+
+    </div>
+    {% endfor %}
+{% else %}
+    <p>아직 스크랩한 글이 없습니다.</p>
+{% endif %}
+
+{% endblock %}
