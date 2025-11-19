@@ -58,6 +58,7 @@
         <!-- 여기에 페이지별 콘텐츠가 들어감 -->
         <!-- 예: 게시판 제목, 글 목록 등 --> 
         
+  <!-----------게시판 상세페이지 글 ------------------------------------------------->
     <div class="board-detail">
         <div class="board-header"> 
             <a href="frontend.html" class="back-button" aria-label="이전 페이지로 이동">
@@ -136,6 +137,7 @@
       data.comment.forEach(c => {
         const div = document.createElement("div");
         div.className = "comment-item";
+        div.id = `comment-${c.id}`;   //댓글에 id를 붙여준다 (대댓글의 경우 부모댓글을 찾기위해)
 
         div.innerHTML = `
         <div class="comment-top">
@@ -197,10 +199,10 @@
 </svg>
  ${data.like_count}
               `;
-               // 버튼 SVG 교체 (빈 하트 ↔ 채워진 하트)
+               // 버튼 SVG 교체 (회색 ↔ 빨간색)
               const btn = e.currentTarget;
               if (btn.classList.contains("liked")) {
-                // 좋아요 취소 → 최색
+                // 좋아요 취소 → 회색
                 btn.innerHTML = `
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -230,14 +232,103 @@
           input.setAttribute("data-parent-id", commentId);
         });
 
-        commentList.appendChild(div);
+        // 부모 댓글이면 바로 추가
+        if (!c.parent_id) {
+          commentList.appendChild(div);
+        } else {
+          // 대댓글이면 부모 댓글 아래에 추가
+          const parentDiv = document.getElementById(`comment-${c.parent_id}`);
+          if (parentDiv) {
+            // 들여쓰기용 wrapper
+            const replyWrapper = document.createElement("div");
+            replyWrapper.style.marginLeft = "20px";
+            replyWrapper.appendChild(div);
+            parentDiv.appendChild(replyWrapper);
+          } else {
+            // 부모 못 찾으면 그냥 목록에 추가
+            commentList.appendChild(div);
+          }
+        }
       });
     });
 }
 
 loadBoardList();
 
+////////////////////////////////// 댓글 작성 이벤트
+document.getElementById("submitComment").addEventListener("click", () => {   // 댓글 작성 버튼을 눌렀을때
+  const content = document.getElementById("commentText").value.trim();       // commentText에 사용자가 입력한 내용을 가져온다
+  const anonymous = document.getElementById("anonymousToggle").checked;      // 익명 체크박스가 체크되어있는지 확인 (체크면 true)
+  const parentId = document.getElementById("commentText").dataset.parentId || null;  //대댓글일 경우 parentId에 저장. 없으면 null -> 일반 댓글이라는 뜻
+
+  if (!content) return; //댓글이 비어있으면 아무것도 하지 않고 함수종료
+
+  fetch(`/api/board/${boardId}/comment/`, {  // /api/board/${boardId}/comment/ 주소로 댓글을 post방식으로 보냄
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      content,
+      anonymous,          // 서버에 보낼 데이터 -> 댓글 내용, 익명여부, 대댓글이면 부모댓글 Id 아니면 null값을 보냄
+      parent_id: parentId
+    })
+  })
+  .then(res => res.json())  // 서버의 응답을 json으로 받기
+  .then(data => {
+    document.getElementById("commentText").value = "";
+    document.getElementById("commentText").removeAttribute("data-parent-id");  //대댓글 모드 해제
+    document.getElementById("commentText").placeholder = "댓글을 입력하세요";  // placeholder 복원
+    loadBoardList();
+  });
+});
+
+// 초기 로딩
+loadBoardList();
+commentList.scrollIntoView({ behavior: "smooth", block: "end" });
+
     </script>
+  
+  <!---------------------------댓글 작성 영역 --------------------------------->
+
+<!-- 댓글 입력 영역 -->
+  <div class="comment-box-wrapper">
+    <div class="comment-box">
+      <!-- 익명 체크박스 -->
+      <label class="anonymous-toggle">
+        <input type="checkbox" id="anonymousToggle" />
+        <label for="anonymousToggle" class="anonymous-label">
+            익명
+        </label>
+      </label>
+
+      <!-- 댓글 입력창 -->
+      <input type="text" id="commentText" placeholder="댓글을 입력하세요" />
+
+      <!-- 제출 버튼 (SVG 아이콘 포함) -->
+      <button id="submitComment" class="send-button" aria-label="댓글 작성">
+        <svg width="34" height="35" viewBox="0 0 34 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g filter="url(#filter0_d_131_211)">
+<path d="M28.3333 2.33337L15.5 15.1667M28.3333 2.33337L20.1667 25.6667L15.5 15.1667M28.3333 2.33337L5 10.5L15.5 15.1667" stroke="#00024F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <defs>
+<filter id="filter0_d_131_211" x="-1.3335" y="0" width="36" height="36" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="2"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_131_211"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_131_211" result="shape"/>
+</filter>
+        </defs>
+        </svg>
+
+      </button>
+    </div>
+  </div>
+
+
+
     </main>
 
     <aside class="layout-right"> 
