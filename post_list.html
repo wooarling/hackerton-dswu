@@ -101,7 +101,6 @@
         <div class="post-card-info">
             <span>👍 {{ post.like_count }}</span>
             <span>💬 {{ post.comment_set.count }}</span>
-            <span>👁 {{ post.views }}</span>
             <span>{{ post.date|date:"Y-m-d H:i" }}</span>
         </div>
 
@@ -112,3 +111,4 @@
 {% endif %}
 
 {% endblock %}
+
