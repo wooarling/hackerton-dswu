@@ -6,8 +6,13 @@ class UserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
             raise ValueError("아이디는 필수입니다.")
+        email = self.normalize_email(extra_fields.get('email'))
+        extra_fields['email'] = email
         user = self.model(username=username, **extra_fields)
-        user.set_password(password)
+        if password:
+            user.set_password(password)
+        else:
+            raise ValueError("비밀번호는 필수입니다.")
         user.save(using=self._db)
         return user
 
