@@ -1,0 +1,184 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내가 쓴 글</title>
+  
+    <link rel="stylesheet" href="{% static 'header.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'profile.css' %}">
+    <link rel="stylesheet" href="{% static 'my_page.css' %}">
+
+</head>
+<body>
+   
+    <header class="layout-header">
+        <!--헤더영역-->
+    <div class="header_logo">LOGO </div>
+    <div class="header-center">
+    <div class="search-container">
+    <input type="text" id="searchInput" placeholder="검색어를 입력해주세요." />
+    <button id="searchBtn" aria-label="검색">
+      <!-- SVG 아이콘 삽입 -->
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24.5 26.25L16.625 18.375C16 18.875 15.2812 19.2708 14.4688 19.5625C13.6562 19.8542 12.7917 20 11.875 20C9.60417 20 7.68229 19.2135 6.10938 17.6406C4.53646 16.0677 3.75 14.1458 3.75 11.875C3.75 9.60417 4.53646 7.68229 6.10938 6.10938C7.68229 4.53646 9.60417 3.75 11.875 3.75C14.1458 3.75 16.0677 4.53646 17.6406 6.10938C19.2135 7.68229 20 9.60417 20 11.875C20 12.7917 19.8542 13.6562 19.5625 14.4688C19.2708 15.2812 18.875 16 18.375 16.625L26.25 24.5L24.5 26.25ZM11.875 17.5C13.4375 17.5 14.7656 16.9531 15.8594 15.8594C16.9531 14.7656 17.5 13.4375 17.5 11.875C17.5 10.3125 16.9531 8.98438 15.8594 7.89062C14.7656 6.79688 13.4375 6.25 11.875 6.25C10.3125 6.25 8.98438 6.79688 7.89062 7.89062C6.79688 8.98438 6.25 10.3125 6.25 11.875C6.25 13.4375 6.79688 14.7656 7.89062 15.8594C8.98438 16.9531 10.3125 17.5 11.875 17.5Z" fill="#0217C2"/>
+      </svg>
+    </button>
+    </div>
+    </div>
+    </div>
+  </header>
+  <div class="layout-body">
+    <nav class="layout-sidebar"> 
+        <!-- 왼쪽 메뉴 --> 
+        <nav class="header_menu_area">
+            <a href="index.html" class="header_menu_item">메인화면</a>
+            
+        </nav>
+
+        <br><div class="menu-divider"></div>
+        <!--게시판 메뉴-->
+        <nav class="board-menu">
+        <li><a href="frontend.html" class="board-link" data-board="frontend">> 프론트엔드 게시판</a> </li>      
+        <li><a href="#" class="board-link" data-board="game">> 게임 개발 게시판</a> </li>
+        <li><a href="#" class="board-link" data-board="iot">> 사물인터넷 게시판</a> </li>
+        <li><a href="#" class="board-link" data-board="bigdata">> 빅데이터 게시판</a> </li>
+        <li><a href="#" class="board-link" data-board="ai">> 인공지능 게시판</a> </li>
+      </nav>
+      <!--직무테스트 하러가기-->
+      <br><br>
+      <div class="sidebar-bottom">
+  <a href="#" class="bottom-button">
+    <span class="text">📄 직무 적성 테스트 하러 가기 ➔</span>
+    
+  </a>
+</div>
+
+    </nav>
+    <main class="layout-content"> 
+        <!-- 여기에 페이지별 콘텐츠가 들어감 -->
+        <!-- 예: 게시판 제목, 글 목록 등 --> 
+        
+
+           <div id="board-content">
+
+  <!-- 심플 폼: 제목 + 내용 -->
+   <div class="content-area">
+    <form id="edit-post-form">
+         <h1>내가 쓴 글</h1>
+
+        <label for="title">제목</label>
+        <input type="text" id="title" name="title">
+
+        <label for="content">내용</label>
+        <textarea id="content" name="content" rows="6"></textarea>
+
+        <button type="submit">수정 완료</button>
+        <button type="button" id="delete-btn">삭제</button>
+    </form>
+    
+       
+
+    
+   </div>
+
+
+  </div>
+    </main>
+     {% if request.user.is_authenticated %}
+<aside class="layout-right"> 
+    <!-- 오른쪽 사용자 정보 영역 --> 
+    <div class="profile_header">
+        <div class="profile_image"></div>
+
+        <div class="profile_info">
+            <!-- 사용자 이름 -->
+            <div class="profile_name">
+                {{ request.user.first_name }}{{ request.user.last_name }}
+                {% if not request.user.first_name and not request.user.last_name %}
+                    {{ request.user.username }}
+                {% endif %}
+            </div>
+
+            <!-- 사용자 아이디(username) -->
+            <div class="profile_id">@{{ request.user.username }}</div>
+        </div>
+
+        <div class="profile_a">🔔</div>
+    </div>
+
+    <div class="profile_menu">
+        <button class="profile_menu_btn">내가 쓴 글</button>
+        <button class="profile_menu_btn">댓글 단 글</button>
+        <button class="profile_menu_btn">스크랩한 글</button>
+    </div>
+
+    <div class="profile_b" style="display: flex; justify-content: center; margin-top: 20px;">
+        <button class="profile_b_btn">로그아웃</button>
+    </div>
+</aside>
+{% endif %}
+    
+  
+  <script>
+    const postId = 1; // 수정할 글 ID
+
+    // 페이지 로드 시 기존 글 불러오기
+    fetch(`/api/board/${postId}/edit/`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" }
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("title").value = data.title || "";
+      document.getElementById("content").value = data.content || "";
+    })
+    .catch(err => console.error(err));
+
+    // 폼 제출 시 수정 API 호출
+    document.getElementById("edit-post-form").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const updatedData = {
+        id: postId,
+        title: document.getElementById("title").value,
+        content: document.getElementById("content").value
+      };
+
+      fetch(`/api/board/${postId}/edit/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData)
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("게시글이 수정되었습니다!");
+        console.log(data);
+      })
+      .catch(err => console.error(err));
+    });
+
+    // 폼 제출 시 수정 API 호출
+    document.getElementById("delete-btn").addEventListener("click", () => {
+  const postId = 1; // 삭제할 글 ID
+
+  if (!confirm("정말 삭제하시겠습니까?")) return;
+
+  fetch(`/api/board/${postId}/delete/`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("게시글이 삭제되었습니다!");
+    // 삭제 후 페이지 이동
+    window.location.href = "/board/";
+  })
+  .catch(err => console.error(err));
+});
+  </script>
+</body>
+</html>
+
