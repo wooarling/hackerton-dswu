@@ -15,7 +15,7 @@
   box-sizing: border-box;
 }
 
-/* 댓글 수정 폼 */
+/* 댓글 수정  */
 #edit-comment-form {
   width: 100%;
   max-width: 900px;
@@ -25,13 +25,13 @@
   box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
 }
 
-/* 타이틀 중앙 정렬 */
+
 h1, h2 {
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* 라벨, 입력창 스타일 */
+
 label {
   display: block;
   margin-top: 20px;
@@ -86,22 +86,18 @@ label {
       <label for="content">댓글 내용</label>
       <textarea id="content" name="content" rows="6">{{ comment.content }}</textarea>
 
-      <!-- 수정 / 삭제 -->
       <div class="button-group">
         <button type="submit" class="update-btn">댓글 수정</button>
 
-        <form method="post" action="{% url 'board:comment_delete' comment.pk %}" style="display:inline;">
-          {% csrf_token %}
-          <button type="submit" class="delete-btn" onclick="return confirm('정말 삭제하시겠습니까?');">
-            삭제
-          </button>
-          
-            <br><br>
-            <a href="{% url 'board:my_comments' %}">취소</a>
-        </form>
-      </div>
+       <button type="submit" formaction="{% url 'board:comment_delete' comment.pk %}" formmethod="post"
+            class="delete-btn"
+            onclick="return confirm('정말 삭제하시겠습니까?');">
+        삭제
+    </button>
+</div>
 
-    </form>
-  </div>
+<br><br>
+<a href="{% url 'board:my_comments' %}">취소</a>
+</form>
 </div>
 {% endblock %}
