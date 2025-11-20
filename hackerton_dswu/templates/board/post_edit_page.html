@@ -3,7 +3,6 @@
 {% block title %}게시글 수정{% endblock %}
 
 {% block content %}
-
 <style>
 /* 수정 */
 .content-area {
@@ -84,7 +83,7 @@ label {
 </style>
 
 <div class="content-area">
-    <form id="edit-post-form" method="post" action="{% url 'board:post_update' post.pk %}">
+    <form id="edit-post-form" method="post" action="{% url 'board:post_edit' post.pk %}">
         {% csrf_token %}
 
         <h2>게시글 수정</h2>
@@ -102,9 +101,12 @@ label {
 
         
         <div class="button-group">
-            <button type="submit" class="update-btn">게시글 수정</button>
+            <!-- 수정 버튼을 GET 방식으로 수정 페이지로 이동하도록 설정 -->
+            <a href="{% url 'board:post_edit' post.pk %}">
+                <button type="button" class="update-btn">게시글 수정</button>
+            </a>
 
-            <!-- 삭제 버튼(action만 바꿈)-->
+            <!-- 삭제 버튼 (POST 방식으로 삭제 요청) -->
             <button type="submit" formaction="{% url 'board:post_delete' post.pk %}" formmethod="post"
                     class="delete-btn"
                     onclick="return confirm('정말 삭제하시겠습니까?');">
@@ -116,5 +118,3 @@ label {
         <a href="{% url 'board:post_detail' post.pk %}">취소</a>
     </form>
 </div>
-
-{% endblock %}

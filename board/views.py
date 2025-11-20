@@ -6,12 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import PostSerializer
+
 # 카테고리 딕셔너리
 CATEGORY_DISPLAY = dict(Post.CATEGORY_CHOICES)
 
 # -------------------- 게시글 목록 --------------------
 def post_list(request, category=None):
-    if category:   # 카테고리별 게시글 필터링
+    if category:  # 카테고리별 게시글 필터링
         posts = Post.objects.filter(category=category).order_by('-id')
         category_display = CATEGORY_DISPLAY.get(category, category)
         template_name = f'board/{category}.html'  # 카테고리별 템플릿
@@ -27,11 +28,6 @@ def post_list(request, category=None):
     return render(request, template_name, context)
 
 
-# -------------------- 팔로우 글 --------------------
-@login_required
-def followed_posts(request):
-    posts = Post.objects.filter(likes=request.user).order_by('-id')
-    return render(request, 'board/post_list.html', {'posts': posts, 'category': '팔로우한 글'})
 
 
 # -------------------- 인기글 --------------------
@@ -61,11 +57,17 @@ def my_scraps(request):
     return render(request, 'board/post_list.html', {'posts': posts, 'category': '내 스크랩'})
 
 
-# -------------------- 게시글 상세 --------------------
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     parent_comments = post.comments.filter(parent__isnull=True).order_by('-created_at')
-    return render(request, 'board/post_detail.html', {'post': post, 'comments': parent_comments})
+    
+
+    context = {
+        'post': post,
+        'comments': parent_comments,
+        'page_title': post.title  # 제목을 게시글의 제목으로 설정
+    }
+    return render(request, 'board/board_detail.html', context)
 
 
 # -------------------- 게시글 작성 --------------------
@@ -75,7 +77,7 @@ def post_create(request, category=None):
         title = request.POST.get('title')
         content = request.POST.get('content')
         is_anonymous = bool(request.POST.get('is_anonymous'))
-        
+
         # 파일/이미지 업로드
         file = request.FILES.get('file')
         image = request.FILES.get('image')
@@ -110,17 +112,10 @@ def post_create(request, category=None):
         }
     )
 
-# -------------------- 게시글 상세 보기 --------------------
-@login_required
-def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    parent_comments = post.comments.filter(parent__isnull=True).order_by('-created_at')
-    return render(request, 'board/board_detail.html', {'post': post, 'comments': parent_comments})
-
 
 # -------------------- 게시글 수정 --------------------
 @login_required
-def post_update(request, pk):
+def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.user != post.user:
         return redirect('board:post_detail', pk=pk)
@@ -139,16 +134,21 @@ def post_update(request, pk):
         post.save()
         return redirect('board:post_detail', pk=pk)
 
-    return render(request, 'board/post_update.html', {'post': post})
+    return render(request, 'board/post_edit_page.html', {'post': post})
 
 
 # -------------------- 게시글 삭제 --------------------
+
 @login_required
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
+
     if request.user == post.user:
+        category = post.category  # 게시글의 카테고리
         post.delete()
-    return redirect('board:post_list')
+
+    # 삭제 후 해당 카테고리 게시판으로 리다이렉트
+    return redirect('board:post_list_category', category=category)
 
 
 # -------------------- 게시글 좋아요 토글 --------------------
@@ -202,6 +202,7 @@ def comment_like_toggle(request, pk):
     else:
         comment.likes.add(request.user)
     return redirect('board:post_detail', pk=comment.post.pk)
+
 
 # 게시글 목록 API 뷰 (JSON)
 class PostList(APIView):

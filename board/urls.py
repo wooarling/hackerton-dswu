@@ -1,8 +1,8 @@
 from django.urls import path
 from .views import (
-    post_list, post_detail, post_update, post_delete,
+    post_list, post_detail, post_edit, post_delete,
     post_like_toggle, post_create, comment_create, comment_like_toggle,
-    followed_posts, popular_posts,
+ popular_posts,
     my_posts, my_comments, my_scraps, post_scrap_toggle,
     PostList  # 추가된 API 뷰
 )
@@ -25,8 +25,9 @@ urlpatterns = [
 
     # -------------------- 게시글 상세 / 수정 / 삭제 --------------------
     path('<int:pk>/', post_detail, name='post_detail'),
-    path('<int:pk>/update/', post_update, name='post_update'),
-    path('<int:pk>/delete/', post_delete, name='post_delete'),
+    path('<int:pk>/edit/', post_edit, name='post_edit'),  # 게시글 수정
+    path('<int:pk>/delete/', post_delete, name='post_delete'),  # 게시글 삭제
+
 
     # -------------------- 게시글 좋아요 / 스크랩 --------------------
     path('<int:pk>/like-toggle/', post_like_toggle, name='post_like_toggle'),
@@ -38,7 +39,6 @@ urlpatterns = [
     path('comment/<int:pk>/like-toggle/', comment_like_toggle, name='comment_like_toggle'),
 
     # -------------------- 특수 게시글 --------------------
-    path('followed/', followed_posts, name='followed_posts'),
     path('popular/', popular_posts, name='popular_posts'),
 
     # -------------------- 내 글 / 댓글 단 글 / 스크랩 --------------------
