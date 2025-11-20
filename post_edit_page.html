@@ -5,7 +5,7 @@
 {% block content %}
 
 <style>
-/* t수정 */
+/* 수정 */
 .content-area {
   display: flex;
   justify-content: center; /* 가로 중앙 */
@@ -15,17 +15,8 @@
   box-sizing: border-box;
 }
 
-/* 삭제 */
-#delete-post-form {
-  width: 100%;
-  max-width: 900px;
-  background-color: white;
-  padding: 50px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
-}
 
-/* 수정 폼 */
+
 #edit-post-form {
   width: 100%;
   max-width: 900px;
@@ -35,7 +26,7 @@
   box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
 }
 
-/* 댓글 폼 */
+
 #edit-comment-form {
   width: 100%;
   max-width: 900px;
@@ -45,24 +36,21 @@
   box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
 }
 
-/* 타이틀 중앙 정렬 */
+/* 중앙 정렬 */
 h1, h2 {
   text-align: center;
   margin-bottom: 20px;
 }
 
-/* 라벨, 입력창 스타일 */
+
 label {
   display: block;
   margin-top: 20px;
   font-weight: bold;
 }
-#edit-post-form input,
-#edit-post-form textarea,
-#edit-post-form button,
-#edit-comment-form input,
-#edit-comment-form textarea,
-#edit-comment-form button {
+
+#edit-post-form textarea
+{
   width: 100%;
   padding: 12px;
   margin-top: 5px;
@@ -70,17 +58,35 @@ label {
   font-size: 14px;
 }
 
-/* 버튼 스타일 */
-button {
+.button-group {
+  display: flex;
+  gap: 10px;
   margin-top: 15px;
+}
+
+.button-group button.update-btn {
+  flex: 1;
   background-color: #0217c2;
   color: white;
+  font-weight: bold;
   border: none;
   cursor: pointer;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+
+.button-group button.delete-btn {
+  background-color: rgb(24, 11, 212);
+  color: white;
   font-weight: bold;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 6px;
+  width: auto;
 }
 </style>
-
 <div class="content-area">
     <form id="edit-post-form" method="post" action="{% url 'board:post_edit' post.pk %}">
         {% csrf_token %}
@@ -98,16 +104,20 @@ button {
             익명으로 작성
         </label>
 
-        <button type="submit">수정 저장</button>
+        
+        <div class="button-group">
+           
+            <button type="submit" class="update-btn">게시글 수정</button>
+
+            <!-- 삭제 버튼(action만 바꿈)-->
+            <button type="submit" formaction="{% url 'board:post_delete' post.pk %}" formmethod="post"
+                    class="delete-btn"
+                    onclick="return confirm('정말 삭제하시겠습니까?');">
+                삭제
+            </button>
+        </div>
 
         <br><br>
         <a href="{% url 'board:post_detail' post.pk %}">취소</a>
     </form>
-
-    <form id="delete-post-form" method="post" action="{% url 'board:post_delete' post.pk %}" style="margin-top:10px;">
-        {% csrf_token %}
-        <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
-    </form>
 </div>
-
-{% endblock %}
