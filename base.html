@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}기본 제목{% endblock %}</title>
+
+    <!-- 공통 CSS -->
+    <link rel="stylesheet" href="{% static 'header.css' %}">
+    <link rel="stylesheet" href="{% static 'layout.css' %}">
+    <link rel="stylesheet" href="{% static 'profile.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- 헤더 -->
+    {% include "layout/header.html" %}
+
+    <div class="layout-body">
+
+        <!-- 왼쪽 사이드바 -->
+        {% include "layout/sidebar.html" %}
+
+        <!-- 실제 페이지 내용 -->
+        <main class="layout-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <!-- 오른쪽 프로필 영역 -->
+        {% include "layout/profile_area.html" %}
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

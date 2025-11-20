@@ -1,0 +1,33 @@
+<aside class="layout-right">
+    <div class="profile_header">
+        <div class="profile_image"></div>
+
+        <div class="profile_info">
+            <div class="profile_name">
+                {{ request.user.first_name }}{{ request.user.last_name }}
+                {% if not request.user.first_name and not request.user.last_name %}
+                    {{ request.user.username }}
+                {% endif %}
+            </div>
+            <div class="profile_id">@{{ request.user.username }}</div>
+        </div>
+
+        <div class="profile_a">🔔</div>
+    </div>
+
+    <div class="profile_menu">
+        <div class="profile_menu">
+    <button class="profile_menu_btn" onclick="location.href='{% url 'user:post_list' %}'">내가 쓴 글</button>
+        <button class="profile_menu_btn" onclick="location.href='{% url 'user:comment_list' %}'">댓글 단 글</button>
+        <button class="profile_menu_btn" onclick="location.href='{% url 'user:scrap_list' %}'">스크랩한 글</button>
+</div>
+
+    </div>
+
+    <div class="profile_b">
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button class="profile_b_btn">로그아웃</button>
+        </form>
+    </div>
+</aside>

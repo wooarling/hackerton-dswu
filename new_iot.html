@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}사물인터넷 게시판{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'board.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<main>
+
+    <div class="postname-header">
+        <h1>📡 사물인터넷 게시판</h1>
+
+        <!-- 새 글 작성 버튼 (Django URL 사용) -->
+        <a href="{% url 'board:post_create' %}" class="write-button">
+            새 글 작성
+            <svg width="22" height="22" viewBox="0 0 22 22">
+                <circle cx="11" cy="11" r="10" stroke="#0217C2" stroke-opacity="0.5" stroke-width="2.5"/>
+                <path d="M11 7v8M7 11h8" stroke="#0217C2" stroke-opacity="0.5" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- 게시글 목록 -->
+    <div id="board-list"></div>
+
+</main>
+
+<script>
+    function loadBoardList() {
+        fetch("/api/board/?category=사물인터넷")
+            .then(res => res.json())
+            .then(data => {
+
+                const list = document.getElementById("board-list");
+                list.innerHTML = "";
+
+                data.board_list.forEach(post => {
+
+                    const card = document.createElement("div");
+                    card.className = "post-card";
+
+                    const preview = post.content.length > 50 ? post.content.slice(0, 50) + "..." : post.content;
+                    const author = post.anonymous ? "익명" : post.user;
+
+                    card.innerHTML = `
+                        <span class="post-category">${post.category} 게시판</span>
+                        <div class="post-title">${post.title}</div>
+                        <div class="post-content">${preview}</div>
+
+                        <div class="post-meta">
+                            <span>👍 ${post.like_count || 0}</span>
+                            <span>💬 ${post.comment_count || 0}</span>
+                            <span>${post.date}</span>
+                            <span>${author}</span>
+                        </div>
+                    `;
+
+                    card.addEventListener("click", () => {
+                        window.location.href = "/board/" + post.id + "/";
+                    });
+
+                    list.prepend(card);
+                });
+            });
+    }
+
+    loadBoardList();
+</script>
+
+{% endblock %}

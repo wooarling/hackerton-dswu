@@ -1,0 +1,24 @@
+<nav class="layout-sidebar">
+
+    <nav class="header_menu_area">
+        <a href="{% url 'index' %}" class="header_menu_item">메인화면</a>
+        <a href="{% url 'popular' %}" class="header_menu_item">현재 인기글</a>
+    </nav>
+
+    <div class="menu-divider"></div>
+
+    <ul class="board-menu">
+        <li><a href="{% url 'board:frontend_list' %}" class="board-link">> 프론트엔드 게시판</a></li>
+        <li><a href="{% url 'board:backend_list' %}" class="board-link">> 백엔드 게시판</a></li>
+        <li><a href="{% url 'board:game_list' %}" class="board-link">> 게임 개발 게시판</a></li>
+        <li><a href="{% url 'board:iot_list' %}" class="board-link">> 사물인터넷 게시판</a></li>
+        <li><a href="{% url 'board:bigdata_list' %}" class="board-link">> 빅데이터 게시판</a></li>
+        <li><a href="{% url 'board:ai_list' %}" class="board-link">> 인공지능 게시판</a></li>
+    </ul>
+
+    <div class="sidebar-bottom">
+        <a href="{% url 'test' %}" class="bottom-button">
+            📄 직무 적성 테스트 하러 가기 ➔
+        </a>
+    </div>
+</nav>
