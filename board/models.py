@@ -14,6 +14,7 @@ class Post(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE
+        
     )  # 작성자
     title = models.CharField(max_length=200)  # 게시글 제목
     content = models.TextField()  # 게시글 내용
@@ -21,6 +22,18 @@ class Post(models.Model):
     is_anonymous = models.BooleanField(default=False)  # 익명 여부
     created_at = models.DateTimeField(auto_now_add=True)  # 생성일
     updated_at = models.DateTimeField(auto_now=True)  # 수정일
+
+    # 🔥 추가된 파일 업로드 필드들
+    file = models.FileField(
+        upload_to="uploads/files/",
+        null=True,
+        blank=True
+    )
+    image = models.ImageField(
+        upload_to="uploads/images/",
+        null=True,
+        blank=True
+    )
 
     # 좋아요 기능
     likes = models.ManyToManyField(

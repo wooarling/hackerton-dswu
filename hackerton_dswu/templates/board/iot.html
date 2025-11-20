@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}사물인터넷 게시판{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'board.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="postname-header">
+        <h1> 📡 사물인터넷 게시판</h1>
+        <a href="{% url 'board:post_create_category' category='iot' %}" class="write-button">
+            새 글 작성
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_160_405)">
+                    <path d="M10.9999 7.33331V14.6666M7.33325 11H14.6666M20.1666 11C20.1666 16.0626 16.0625 20.1666 10.9999 20.1666C5.93731 20.1666 1.83325 16.0626 1.83325 11C1.83325 5.93737 5.93731 1.83331 10.9999 1.83331C16.0625 1.83331 20.1666 5.93737 20.1666 11Z" stroke="#0217C2" stroke-opacity="0.5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+                <defs>
+                    <clipPath id="clip0_160_405">
+                        <rect width="22" height="22" fill="white"/>
+                    </clipPath>
+                </defs>
+            </svg>
+        </a>
+    </div>
+
+    <!-- 게시글 목록을 담을 영역 -->
+    <div id="board-list">
+        {% if posts %}
+            {% for post in posts %}
+                <div class="post-card">
+                    <span class="post-category">{{ post.category }} 게시판</span>
+                    <div class="post-title">{{ post.title }}</div>
+                    <div class="post-content">
+                        {{ post.content|truncatewords:20 }} <!-- 내용 일부만 표시 -->
+                    </div>
+                    <div class="post-meta">
+                        <span>좋아요: {{ post.like_count }}</span>
+                        <span>댓글: {{ post.comment_count }}</span>
+                        <span>{{ post.date }}</span>
+                        <span>{{ post.user }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>게시글이 없습니다.</p>
+        {% endif %}
+    </div>
+
+{% endblock %}

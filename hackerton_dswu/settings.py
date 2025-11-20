@@ -29,9 +29,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third party
     'rest_framework',
-    'rest_framework_simplejwt',  # JWT 패키지
-    'rest_framework_simplejwt.token_blacklist',  # 로그아웃(블랙리스트)용
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
+
+    # Local apps
     'it_test',
     'accounts',
     'board',
@@ -45,7 +48,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',  # 전체 기본 접근 허용
+        'rest_framework.permissions.AllowAny',
     ),
 }
 
@@ -73,10 +76,11 @@ ROOT_URLCONF = 'hackerton_dswu.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'hackerton_dswu' / 'templates'],
+        'DIRS': [BASE_DIR / 'hackerton_dswu' / 'templates'],  # 프로젝트 템플릿 폴더
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -119,13 +123,21 @@ USE_I18N = True
 USE_TZ = True
 
 # -----------------------------
-# 정적 파일(CSS, JS, 이미지) 설정
+# 정적 파일(CSS, JS)
 # -----------------------------
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "hackerton_dswu", "static"),
 ]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # 배포 시 사용 (optional)
+
+# -----------------------------
+# 미디어 파일 (업로드 파일 저장)
+# -----------------------------
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # -----------------------------
 # 기본 자동 필드

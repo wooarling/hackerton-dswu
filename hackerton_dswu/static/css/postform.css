@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}게시글 작성{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'postform.css' %}">
+{% endblock %}
+
+{% block content %}
+<main>
+    <!-- 게시글 작성 폼 -->
+    <form class="post-form"
+          action="{% if category %}{% url 'board:post_create_category' category=category %}{% else %}{% url 'board:post_create' %}{% endif %}"
+          method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- 폼 헤더 -->
+        <div class="form-header">
+            <!-- 뒤로가기 버튼 -->
+            {% if category %}
+            <a href="{% url 'board:post_list_category' category=category %}" class="back-button" aria-label="이전 페이지로 이동">
+            {% else %}
+            <a href="{% url 'board:post_list' %}" class="back-button" aria-label="이전 페이지로 이동">
+            {% endif %}
+                <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.6249 17.5L23.3333 24.2083L21.2916 26.25L12.5416 17.5L21.2916 8.75L23.3333 10.7917L16.6249 17.5Z" fill="black" fill-opacity="0.28"/>
+                </svg>
+            </a>
+
+            <!-- 현재 카테고리 표시 -->
+            <span class="form-title">
+                {% if category %}{{ category }} 게시판{% else %}게시글 작성{% endif %}
+            </span>
+
+            <!-- 완료 버튼 -->
+            <button type="submit" class="submit-button">완료</button>
+        </div>
+
+        <!-- 제목 -->
+        <input type="text" name="title" placeholder="제목을 입력해주세요" required>
+
+        <!-- 본문 -->
+        <textarea id="detail" name="content" placeholder="본문을 작성해주세요!" required></textarea>
+
+        <!-- 파일 업로드 -->
+        <div class="file-upload">
+            <label for="file">파일 삽입</label>
+            <input type="file" id="file" name="file">
+        </div>
+
+        <!-- 익명 체크 -->
+        <div class="anonymous-check">
+            <input type="checkbox" id="is_anonymous" name="is_anonymous">
+            <label for="is_anonymous">익명</label>
+        </div>
+
+        <!-- 카테고리 선택: URL로 category가 넘어오면 숨기기 -->
+        {% if not category %}
+        <div class="category-select">
+            <label for="category">카테고리 선택:</label>
+            <select name="category" id="category">
+                {% for key, value in categories.items %}
+                    <option value="{{ key }}">{{ value }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+    </form>
+</main>
+
+<!-- 자동 높이 조절 -->
+<script>
+const textarea = document.getElementById("detail");
+textarea.addEventListener("input", function() {
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+});
+</script>
+{% endblock %}
