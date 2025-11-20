@@ -5,7 +5,7 @@
 
 {% block content %}
 <style>
-/* content-area 중앙 정렬 */
+/* 중앙 정렬 */
 .content-area {
   display: flex;
   justify-content: center;
@@ -25,17 +25,6 @@
   box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
 }
 
-/* 댓글 삭제 폼 */
-#delete-comment-form {
-  width: 100%;
-  max-width: 900px;
-  background-color: white;
-  padding: 50px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
-  margin-top: 10px;
-}
-
 /* 타이틀 중앙 정렬 */
 h1, h2 {
   text-align: center;
@@ -48,9 +37,7 @@ label {
   margin-top: 20px;
   font-weight: bold;
 }
-#edit-comment-form textarea,
-#edit-comment-form button,
-#delete-comment-form button {
+#edit-comment-form textarea {
   width: 100%;
   padding: 12px;
   margin-top: 5px;
@@ -58,20 +45,40 @@ label {
   font-size: 14px;
 }
 
-/* 버튼 스타일 */
-button {
+/* 한 줄 배치 */
+.button-group {
+  display: flex;
+  gap: 10px;
   margin-top: 15px;
+}
+
+/* 수정 버튼 스타일 */
+.button-group button.update-btn {
+  flex: 1;
   background-color: #0217c2;
   color: white;
+  font-weight: bold;
   border: none;
   cursor: pointer;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+/* 삭제 버튼 스타일 */
+.button-group button.delete-btn {
+  background-color: rgb(24, 11, 212);
+  color: white;
   font-weight: bold;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 6px;
+  width: auto;
 }
 </style>
 
 <div id="board-content">
   <div class="content-area">
-    <!-- 댓글 수정 폼 -->
     <form id="edit-comment-form" method="post" action="{% url 'board:comment_edit' comment.pk %}">
       {% csrf_token %}
       <h1>내가 쓴 댓글</h1>
@@ -79,15 +86,21 @@ button {
       <label for="content">댓글 내용</label>
       <textarea id="content" name="content" rows="6">{{ comment.content }}</textarea>
 
-      <button type="submit">댓글 수정</button>
-      <br><br>
-      <a href="{% url 'board:my_comments' %}">취소</a>
-    </form>
+      <!-- 수정 / 삭제 -->
+      <div class="button-group">
+        <button type="submit" class="update-btn">댓글 수정</button>
 
-    <!-- 댓글 삭제 폼 -->
-    <form id="delete-comment-form" method="post" action="{% url 'board:comment_delete' comment.pk %}">
-      {% csrf_token %}
-      <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">댓글 삭제</button>
+        <form method="post" action="{% url 'board:comment_delete' comment.pk %}" style="display:inline;">
+          {% csrf_token %}
+          <button type="submit" class="delete-btn" onclick="return confirm('정말 삭제하시겠습니까?');">
+            삭제
+          </button>
+          
+            <br><br>
+            <a href="{% url 'board:my_comments' %}">취소</a>
+        </form>
+      </div>
+
     </form>
   </div>
 </div>
