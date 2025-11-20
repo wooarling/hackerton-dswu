@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}게임 개발 게시판{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'board.css' %}">
+{% endblock %}
+
+{% block content %}
+
+        <div class="postname-header">
+        <h1> 🎮 게임 개발 게시판</h1><a href="postform.html" class="write-button">새 글 작성 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_160_405)">
+<path d="M10.9999 7.33331V14.6666M7.33325 11H14.6666M20.1666 11C20.1666 16.0626 16.0625 20.1666 10.9999 20.1666C5.93731 20.1666 1.83325 16.0626 1.83325 11C1.83325 5.93737 5.93731 1.83331 10.9999 1.83331C16.0625 1.83331 20.1666 5.93737 20.1666 11Z" stroke="#0217C2" stroke-opacity="0.5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<clipPath id="clip0_160_405">
+<rect width="22" height="22" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+</a>
+</div>
+       <!--게시글 목록을 담을 영역-->
+      <div  id="board-list"></div> 
+
+      <script>  
+        //글 목록을 불러오는 기능 함수
+        function loadBoardList() {     // 글 작성 후 새로고침헐 때 이 함수를 다시 호출하면 됨
+        fetch("/api/board/?category=게임")  // 장고 서버의 /api/board/ 주소로 get 요청을 보내는 것
+        .then(res => res.json())       //장고가 DB에 저장된 글 목록을 json형식으로 응답
+        .then(data => {                // 서버에서 받은 응답을 json객체로 변환
+        const list = document.getElementById("board-list");  
+        list.innerHTML = ""; // 기존 목록 초기화
+        
+        data.board_list.forEach(post => {    // board_list 배열에 있는 글들을 꺼내서 화면에 표시
+        const card = document.createElement("div");  //새로운 div 태그 만들어서 글제목, 내용, 작성시간 넣기
+        card.className = "post-card"; // 각 카드에 css 적용
+        
+        const preview = post.content.length > 50
+          ? post.content.slice(0, 50) + "..."
+          : post.content;
+
+        const author = post.anonymous ? "익명" : post.user;
+
+        card.innerHTML = ` 
+          <div class="post-card">
+          <span class="post-category">${post.category} 게시판</span>
+
+          <div class="post-title">&nbsp&nbsp${post.title}</div>
+          <div class="post-content">&nbsp&nbsp&nbsp${preview}</div>
+
+          <div class="post-meta">
+            <span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_70_183)">
+            <path d="M3.5 5.5L5.5 1C5.89782 1 6.27936 1.15804 6.56066 1.43934C6.84196 1.72064 7 2.10218 7 2.5V4.5H9.83C9.97495 4.49836 10.1185 4.52825 10.2508 4.58761C10.383 4.64697 10.5008 4.73437 10.5959 4.84376C10.6911 4.95315 10.7613 5.08191 10.8017 5.22113C10.8421 5.36034 10.8518 5.50668 10.83 5.65L10.14 10.15C10.1038 10.3885 9.98272 10.6058 9.79895 10.762C9.61519 10.9182 9.38116 11.0027 9.14 11H3.5M3.5 5.5V11M3.5 5.5H2C1.73478 5.5 1.48043 5.60536 1.29289 5.79289C1.10536 5.98043 1 6.23478 1 6.5V10C1 10.2652 1.10536 10.5196 1.29289 10.7071C1.48043 10.8946 1.73478 11 2 11H3.5" stroke="#BA1A1A" stroke-opacity="0.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_70_183">
+            <rect width="12" height="12" fill="white"/>
+            </clipPath>
+            </defs>
+            </svg> ${post.like_count || 0}</span>
+            <span><svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1.5 7.5C1.5 7.76522 1.60536 8.01957 1.79289 8.20711C1.98043 8.39464 2.23478 8.5 2.5 8.5H8.5L10.5 10.5V2.5C10.5 2.23478 10.3946 1.98043 10.2071 1.79289C10.0196 1.60536 9.76522 1.5 9.5 1.5H2.5C2.23478 1.5 1.98043 1.60536 1.79289 1.79289C1.60536 1.98043 1.5 2.23478 1.5 2.5V7.5Z" stroke="#000477" stroke-opacity="0.37" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg> ${post.comment_count || 0}</span>
+            <span> ${post.date}</span>
+            <span> ${author}</span>
+          </div>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+        window.location.href = `/board/${post.id}/`;  // 클릭하면 해당 url로 이동
+         });
+        list.prepend(card);  //완성된 div를 div안에 추가
+          });
+        });
+        }
+        loadBoardList(); // 페이지 로드 시 자동 실행
+      </script>
+    </main>
+
+    
