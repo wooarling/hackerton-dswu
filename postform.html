@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 {% load static %}
 
@@ -12,7 +13,7 @@
        <form class="post-form" action="/api/posts/create" method="post" enctype="multipart/form-data">
         
         <div class="form-header">
-        <a href="frontend.html" class="back-button" aria-label="이전 페이지로 이동">
+        <a href="javascript:history.back()" class="back-button" aria-label="이전 페이지로 이동">
             <!-- 뒤로가기 아이콘 -->
         <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M16.6249 17.5L23.3333 24.2083L21.2916 26.25L12.5416 17.5L21.2916 8.75L23.3333 10.7917L16.6249 17.5Z" fill="black" fill-opacity="0.28"/>
