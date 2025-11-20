@@ -1,0 +1,94 @@
+{% load static %}
+{% extends "base.html" %}
+
+{% block title %}댓글 수정{% endblock %}
+
+{% block content %}
+<style>
+/* content-area 중앙 정렬 */
+.content-area {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 50px;
+  box-sizing: border-box;
+}
+
+/* 댓글 수정 폼 */
+#edit-comment-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+}
+
+/* 댓글 삭제 폼 */
+#delete-comment-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+  margin-top: 10px;
+}
+
+/* 타이틀 중앙 정렬 */
+h1, h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* 라벨, 입력창 스타일 */
+label {
+  display: block;
+  margin-top: 20px;
+  font-weight: bold;
+}
+#edit-comment-form textarea,
+#edit-comment-form button,
+#delete-comment-form button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+/* 버튼 스타일 */
+button {
+  margin-top: 15px;
+  background-color: #0217c2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+</style>
+
+<div id="board-content">
+  <div class="content-area">
+    <!-- 댓글 수정 폼 -->
+    <form id="edit-comment-form" method="post" action="{% url 'board:comment_edit' comment.pk %}">
+      {% csrf_token %}
+      <h1>내가 쓴 댓글</h1>
+
+      <label for="content">댓글 내용</label>
+      <textarea id="content" name="content" rows="6">{{ comment.content }}</textarea>
+
+      <button type="submit">댓글 수정</button>
+      <br><br>
+      <a href="{% url 'board:my_comments' %}">취소</a>
+    </form>
+
+    <!-- 댓글 삭제 폼 -->
+    <form id="delete-comment-form" method="post" action="{% url 'board:comment_delete' comment.pk %}">
+      {% csrf_token %}
+      <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">댓글 삭제</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
