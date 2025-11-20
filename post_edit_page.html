@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}게시글 수정{% endblock %}
+
+{% block content %}
+
+<style>
+/* t수정 */
+.content-area {
+  display: flex;
+  justify-content: center; /* 가로 중앙 */
+  align-items: flex-start; /* 세로 정렬 */
+  min-height: 100vh;       /* 화면 전체 높이 */
+  padding-top: 50px;
+  box-sizing: border-box;
+}
+
+/* 삭제 */
+#delete-post-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+}
+
+/* 수정 폼 */
+#edit-post-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+}
+
+/* 댓글 폼 */
+#edit-comment-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+}
+
+/* 타이틀 중앙 정렬 */
+h1, h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* 라벨, 입력창 스타일 */
+label {
+  display: block;
+  margin-top: 20px;
+  font-weight: bold;
+}
+#edit-post-form input,
+#edit-post-form textarea,
+#edit-post-form button,
+#edit-comment-form input,
+#edit-comment-form textarea,
+#edit-comment-form button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+/* 버튼 스타일 */
+button {
+  margin-top: 15px;
+  background-color: #0217c2;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+</style>
+
+<div class="content-area">
+    <form id="edit-post-form" method="post" action="{% url 'board:post_edit' post.pk %}">
+        {% csrf_token %}
+
+        <h2>게시글 수정</h2>
+
+        <label>제목:</label>
+        <input type="text" name="title" value="{{ post.title }}">
+
+        <label>내용:</label>
+        <textarea name="content" rows="10">{{ post.content }}</textarea>
+
+        <label>
+            <input type="checkbox" name="is_anonymous" {% if post.is_anonymous %}checked{% endif %}>
+            익명으로 작성
+        </label>
+
+        <button type="submit">수정 저장</button>
+
+        <br><br>
+        <a href="{% url 'board:post_detail' post.pk %}">취소</a>
+    </form>
+
+    <form id="delete-post-form" method="post" action="{% url 'board:post_delete' post.pk %}" style="margin-top:10px;">
+        {% csrf_token %}
+        <button type="submit" onclick="return confirm('정말 삭제하시겠습니까?');">삭제</button>
+    </form>
+</div>
+
+{% endblock %}
