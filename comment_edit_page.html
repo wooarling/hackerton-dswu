@@ -81,7 +81,7 @@ label {
   <div class="content-area">
     <form id="edit-comment-form" method="post" action="{% url 'board:comment_edit' comment.pk %}">
       {% csrf_token %}
-      <h1>내가 쓴 댓글</h1>
+      <h1>댓글 수정</h1>
 
       <label for="content">댓글 내용</label>
       <textarea id="content" name="content" rows="6">{{ comment.content }}</textarea>
@@ -101,3 +101,4 @@ label {
 </form>
 </div>
 {% endblock %}
+
