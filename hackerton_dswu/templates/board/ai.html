@@ -31,7 +31,14 @@
             {% for post in posts %}
                 <div class="post-card">
                     <span class="post-category">{{ post.category }} 게시판</span>
-                    <div class="post-title">{{ post.title }}</div>
+                    
+                    <!-- 게시글 제목 클릭 시 상세보기로 이동 -->
+                    <div class="post-title">
+                        <a href="{% url 'board:post_detail' post.pk %}">
+                            {{ post.title }}
+                        </a>
+                    </div>
+
                     <div class="post-content">
                         {{ post.content|truncatewords:20 }} <!-- 내용 일부만 표시 -->
                     </div>
@@ -47,5 +54,5 @@
             <p>게시글이 없습니다.</p>
         {% endif %}
     </div>
-
 {% endblock %}
+

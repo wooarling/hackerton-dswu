@@ -110,6 +110,13 @@ def post_create(request, category=None):
         }
     )
 
+# -------------------- 게시글 상세 보기 --------------------
+@login_required
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    parent_comments = post.comments.filter(parent__isnull=True).order_by('-created_at')
+    return render(request, 'board/board_detail.html', {'post': post, 'comments': parent_comments})
+
 
 # -------------------- 게시글 수정 --------------------
 @login_required

@@ -31,7 +31,14 @@
             {% for post in posts %}
                 <div class="post-card">
                     <span class="post-category">{{ post.category }} 게시판</span>
-                    <div class="post-title">{{ post.title }}</div>
+                    
+                    <!-- 제목을 클릭하면 게시글 상세 페이지로 이동 -->
+                    <div class="post-title">
+                        <a href="{% url 'board:post_detail' post.pk %}">
+                            {{ post.title }}
+                        </a>
+                    </div>
+
                     <div class="post-content">
                         {{ post.content|truncatewords:20 }}
                     </div>

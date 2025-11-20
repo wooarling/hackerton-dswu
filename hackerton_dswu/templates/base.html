@@ -77,12 +77,17 @@
         <div class="profile_a">🔔</div>
       </div>
       <div class="profile_menu">
-        <button class="profile_menu_btn">내가 쓴 글</button>
-        <button class="profile_menu_btn">댓글 단 글</button>
-        <button class="profile_menu_btn">스크랩한 글</button>
+        <a href="{% url 'board:my_posts' %}" class="profile_menu_btn">내가 쓴 글</a>
+        <a href="{% url 'board:my_comments' %}" class="profile_menu_btn">댓글 단 글</a>
+        <a href="{% url 'board:my_scraps' %}" class="profile_menu_btn">스크랩한 글</a>
       </div>
+
       <div class="profile_b">
-        <button class="profile_b_btn">로그아웃</button>
+        <!-- 로그아웃을 위한 폼 -->
+          <form action="{% url 'accounts:logout_view' %}" method="POST">
+              {% csrf_token %}
+              <button type="submit" class="profile_b_btn">로그아웃</button>
+          </form>
       </div>
     </aside>
   </div>

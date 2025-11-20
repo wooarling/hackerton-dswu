@@ -6,7 +6,7 @@ app_name = 'accounts'
 urlpatterns = [
     path('login/', login_page, name='login_page'),
     path('register/', register_page, name='register_page'),
-    path('logout/', logout_view, name='logout'),
+    path('logout/', logout_view, name='logout_view'),  # 여기 변경됨
     
     # API용 URL
     path('api/register/', RegisterView.as_view(), name='api_register'),

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}게시글 수정{% endblock %}
+
+{% block content %}
+
+<style>
+/* 수정 */
+.content-area {
+  display: flex;
+  justify-content: center; /* 가로 중앙 */
+  align-items: flex-start; /* 세로 정렬 */
+  min-height: 100vh;       /* 화면 전체 높이 */
+  padding-top: 50px;
+  box-sizing: border-box;
+}
+
+#edit-post-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+}
+
+#edit-comment-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+}
+
+/* 중앙 정렬 */
+h1, h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+#edit-post-form textarea
+{
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.button-group button.update-btn {
+  flex: 1;
+  background-color: #0217c2;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.button-group button.delete-btn {
+  background-color: rgb(24, 11, 212);
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 6px;
+  width: auto;
+}
+</style>
+
+<div class="content-area">
+    <form id="edit-post-form" method="post" action="{% url 'board:post_update' post.pk %}">
+        {% csrf_token %}
+
+        <h2>게시글 수정</h2>
+
+        <label>제목:</label>
+        <input type="text" name="title" value="{{ post.title }}">
+
+        <label>내용:</label>
+        <textarea name="content" rows="10">{{ post.content }}</textarea>
+
+        <label>
+            <input type="checkbox" name="is_anonymous" {% if post.is_anonymous %}checked{% endif %}>
+            익명으로 작성
+        </label>
+
+        
+        <div class="button-group">
+            <button type="submit" class="update-btn">게시글 수정</button>
+
+            <!-- 삭제 버튼(action만 바꿈)-->
+            <button type="submit" formaction="{% url 'board:post_delete' post.pk %}" formmethod="post"
+                    class="delete-btn"
+                    onclick="return confirm('정말 삭제하시겠습니까?');">
+                삭제
+            </button>
+        </div>
+
+        <br><br>
+        <a href="{% url 'board:post_detail' post.pk %}">취소</a>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,71 +1,72 @@
+{% extends "base.html" %}
 {% load static %}
 
 {% block title %}게시글 상세보기{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'board_detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/board_detail.css' %}">
 {% endblock %}
 
 {% block content %}
-        
-  <!-----------게시판 상세페이지 글 ------------------------------------------------->
     <div class="board-detail">
         <div class="board-header"> 
-            <a href="frontend.html" class="back-button" aria-label="이전 페이지로 이동">
-            <!-- 뒤로가기 아이콘 -->
-            <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16.6249 17.5L23.3333 24.2083L21.2916 26.25L12.5416 17.5L21.2916 8.75L23.3333 10.7917L16.6249 17.5Z" fill="black" fill-opacity="0.28"/>
-            </svg>
+            <!-- 뒤로가기 버튼 -->
+            <a href="{% url 'board:post_list_category' category=post.category %}" class="back-button" aria-label="이전 페이지로 이동">
+                <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.6249 17.5L23.3333 24.2083L21.2916 26.25L12.5416 17.5L21.2916 8.75L23.3333 10.7917L16.6249 17.5Z" fill="black" fill-opacity="0.28"/>
+                </svg>
             </a>
-            <!--게시판 이름-->
-            <span class="board-category" id="board-category"></span>
-            <!--수정, 삭제 버튼-->
-            <form action="/edit" method="POST">
-             <button type="submit" class="edit-button">수정</button>
-            </form>           
-            <form action="/delete" method="POST">
-            <button type="submit" class="delete-button">삭제</button>
+            <span class="board-category">{{ post.category }} 게시판</span>
+            
+            <!-- 수정, 삭제 버튼 -->
+            <form action="{% url 'board:post_update' post.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="edit-button">수정</button>
+            </form>
+            <form action="{% url 'board:post_delete' post.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit" class="delete-button">삭제</button>
             </form>        
         </div>
 
         <div class="board-body">
-            <!-- 작성자와 시간 표시 영역 -->
+            <!-- 작성자와 시간 표시 -->
             <div class="board-meta-top">
-            <span class="board-author" id="board-author"></span>
-            <span class="board-date" id="board-date"></span>
+                <span class="board-author">{{ post.user }}</span>
+                <span class="board-date">{{ post.date }}</span>
             </div>
             <!-- 게시글 제목과 내용 -->
-            <h2 class="board-title" id="board-title"></h2>
-            <p class="board-content" id="board-content"></p>
+            <h2 class="board-title">{{ post.title }}</h2>
+            <p class="board-content">{{ post.content }}</p>
         </div>
 
         <div class="board-footer">
-            <span class="board-meta" id="board-likes"></span>
-            <span class="board-meta" id="board-comments"></span>
-            <span class="board-meta" id="board-date"></span>
-            <span class="board-meta" id="board-author"></span>
-            
-            <!--스크랩 추가-->
+            <span class="board-meta">좋아요: {{ post.like_count }}</span>
+            <span class="board-meta">댓글: {{ post.comment_count }}</span>
+            <span class="board-meta">스크랩: {{ post.scrap_count }}</span>
+
+            <!-- 스크랩 버튼 -->
             <form action="{% url 'board:post_scrap_toggle' post.pk %}" method="post" style="display:inline;">
-            {% csrf_token %}
-            <button type="submit" class="scrap-button">
-            {% if user in post.scraps.all %}
-            <!-- 이미 스크랩한 경우: 채워진 아이콘 -->
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5.33975 20.1667L6.82933 13.7271L1.8335 9.39583L8.4335 8.82292L11.0002 2.75L13.5668 8.82292L20.1668 9.39583L15.171 13.7271L16.6606 20.1667L11.0002 16.7521L5.33975 20.1667Z" fill="#FFD559"/>
-            </svg>
-            {% else %}
-            <!-- 스크랩하지 않은 경우: 빈 아이콘 -->
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M9.99984 1.66663L12.5748 6.88329L18.3332 7.72496L14.1665 11.7833L15.1498 17.5166L9.99984 14.8083L4.84984 17.5166L5.83317 11.7833L1.6665 7.72496L7.42484 6.88329L9.99984 1.66663Z" stroke="#FFBF00" stroke-opacity="0.65" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            {% endif %}  
-            <!-- 스크랩 수 표시 -->
-            <span class="scrap-count">{{ post.scrap_count }}</span> 
-          </button>
-          </form>
+                {% csrf_token %}
+                <button type="submit" class="scrap-button">
+                    {% if user in post.scraps.all %}
+                        <!-- 이미 스크랩한 경우: 채워진 아이콘 -->
+                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M5.33975 20.1667L6.82933 13.7271L1.8335 9.39583L8.4335 8.82292L11.0002 2.75L13.5668 8.82292L20.1668 9.39583L15.171 13.7271L16.6606 20.1667L11.0002 16.7521L5.33975 20.1667Z" fill="#FFD559"/>
+                        </svg>
+                    {% else %}
+                        <!-- 스크랩하지 않은 경우: 빈 아이콘 -->
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9.99984 1.66663L12.5748 6.88329L18.3332 7.72496L14.1665 11.7833L15.1498 17.5166L9.99984 14.8083L4.84984 17.5166L5.83317 11.7833L1.6665 7.72496L7.42484 6.88329L9.99984 1.66663Z" stroke="#FFBF00" stroke-opacity="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    {% endif %}
+                    <span class="scrap-count">{{ post.scrap_count }}</span> 
+                </button>
+            </form>
         </div>
     </div>
+{% endblock %}
+
 
     <!--------------------게시글 내용을 불러오는 js----------------->
     <script>
@@ -298,4 +299,4 @@ commentList.scrollIntoView({ behavior: "smooth", block: "end" });
     </div>
   </div>
 
-   {% endblock %}
+ 
