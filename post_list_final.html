@@ -1,0 +1,123 @@
+
+{% extends "base.html" %}
+
+{% block title %}내가 쓴 글{% endblock %}
+
+{% block content %}
+<h1 class="page-title" style="display:flex; align-items:center; gap:6px;">
+
+    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.25 15.75V12.25H36.75V15.75H12.25ZM12.25 22.75V19.25H36.75V22.75H12.25ZM12.25 29.75V26.25H36.75V29.75H12.25ZM7 15.75C6.50361 15.75 6.08798 15.5823 5.75312 15.2469C5.41771 14.9121 5.25 14.4964 5.25 14C5.25 13.5036 5.41771 13.088 5.75312 12.7531C6.08798 12.4177 6.50361 12.25 7 12.25C7.49639 12.25 7.91202 12.4177 8.24688 12.7531C8.58229 13.0879 8.75 13.5036 8.75 14C8.75 14.4964 8.58229 14.9121 8.24688 15.2469C7.91202 15.5823 7.49639 15.75 7 15.75ZM7 22.75C6.50361 22.75 6.08798 22.5823 5.75312 22.2469C5.41771 21.9121 5.25 21.4964 5.25 21C5.25 20.5036 5.41771 20.088 5.75312 19.7531C6.08798 19.4177 6.50361 19.25 7 19.25C7.49639 19.25 7.91202 19.4177 8.24688 19.7531C8.58229 20.0879 8.75 20.5036 8.75 21C8.75 21.4964 8.58229 21.9121 8.24688 22.2469C7.91202 22.5823 7.49639 22.75 7 22.75ZM7 29.75C6.50361 29.75 6.08798 29.5823 5.75312 29.2469C5.41771 28.9121 5.25 28.4964 5.25 28C5.25 27.5036 5.41771 27.088 5.75312 26.7531C6.08798 26.4177 6.50361 26.25 7 26.25C7.49639 26.25 7.91202 26.4177 8.24688 26.7531C8.58229 27.0879 8.75 27.5036 8.75 28C8.75 28.4964 8.58229 28.9121 8.24688 29.2469C7.91202 29.5823 7.49639 29.75 7 29.75Z" fill="#0217C2"/>
+    </svg>
+
+    내가 쓴 글
+</h1>
+
+
+
+<style>
+/* 카드 전체 스타일 */
+.post-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 카테고리 */
+.post-card-category {
+    font-size: 12px;
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background-color: #eef1ff;
+            color: #2f3ecf;
+            margin-bottom: 8px;
+            font-weight: 600;;
+}
+
+/* 제목 */
+.post-card-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.post-card-title a {
+    text-decoration: none;
+    color: #000;
+}
+
+.post-card-title a:hover {
+    color: #007bff;
+}
+
+/* 작성자 & 좋아요 */
+.post-card p {
+    font-size: 14px;
+    color: #444;
+    margin: 4px 0;
+}
+
+
+.post-card-info {
+   display: flex;
+    gap: 18px;
+    font-size: 13px;
+    color: #7a7a7a;
+}
+.post-card-info span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+</style>
+
+{% if posts %}
+    {% for post in posts %}
+    <div class="post-card">
+
+        <div class="post-card-category">
+            {{ post.get_category_display }}
+        </div>
+
+        <div class="post-card-title">
+            <a href="{% url 'board:post_detail' post.pk %}">
+                {{ post.title }}
+            </a>
+        </div>
+
+        <p style="font-size: 14px;">
+            작성자: 
+            {% if post.is_anonymous %}
+                익명
+            {% else %}
+                {{ post.user.username }}
+            {% endif %}
+            | 좋아요: {{ post.like_count }}
+        </p>
+
+       
+
+        <div class="post-card-info">
+            <span>👍 {{ post.like_count }}</span>
+            <span>💬 {{ post.comment_set.count }}</span>
+            <span>작성일: {{ post.date|date:"Y-m-d H:i" }}</span>
+        </div>
+
+    </div>
+    {% endfor %}
+{% else %}
+    <p>아직 작성한 글이 없습니다.</p>
+{% endif %}
+
+{% endblock %}
+

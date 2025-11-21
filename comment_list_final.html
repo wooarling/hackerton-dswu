@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}댓글 단 글{% endblock %}
+
+{% block content %}
+
+<h1 class="page-title" style="display:flex; align-items:center; gap:6px;">
+
+    <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10.5 24.5H31.5V21H10.5V24.5ZM10.5 19.25H31.5V15.75H10.5V19.25ZM7 38.5C6.125 38.5 5.39062 38.1875 4.79688 37.5625C4.20312 36.9375 3.90625 36.2188 3.90625 35.4062V7C3.90625 6.1875 4.20312 5.46875 4.79688 4.84375C5.39062 4.21875 6.125 3.90625 7 3.90625H35C35.875 3.90625 36.6094 4.21875 37.2031 4.84375C37.7969 5.46875 38.0938 6.1875 38.0938 7V29.9688C38.0938 30.75 37.7969 31.4531 37.2031 32.0781C36.6094 32.7031 35.875 33.0156 35 33.0156H12.2812L7 38.5ZM7 28H32.9875L35 29.9688V7H7V28Z" fill="#0217C2"/>
+    </svg>
+
+    댓글 단 글
+</h1>
+
+
+<style>
+/* 카드 전체 스타일 */
+.post-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.post-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* 댓글이 달린 게시글 제목 */
+.post-card-category {
+    font-size: 12px;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background-color: #eef1ff;
+    color: #2f3ecf;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+/* 댓글 작성자 & 내용 */
+.post-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.post-card-title a {
+    text-decoration: none;
+    color: #000;
+}
+
+.post-card-title a:hover {
+    color: #007bff;
+}
+
+.post-card p {
+    font-size: 14px;
+    color: #444;
+    margin: 4px 0;
+}
+
+.post-card-info {
+    display: flex;
+    gap: 18px;
+    font-size: 13px;
+    color: #7a7a7a;
+}
+
+.post-card-info span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+</style>
+
+{% if comments %}
+    {% for comment in comments %}
+    <div class="post-card">
+        <div class="post-card-category">
+            {{ post.get_category_display }}
+        </div>
+        <div class="post-card-category">
+            <댓글이 달린 글> 
+            <a href="{% url 'board:post_detail' comment.post.pk %}">
+                {{ comment.post.title }}
+            </a>
+        </div>
+
+        <div class="post-card-title">
+            {% if comment.is_anonymous %}
+                익명
+            {% else %}
+                {{ comment.user.username }}
+            {% endif %}
+        </div>
+
+        <p>
+            {{ comment.content|truncatechars:120 }}
+        </p>
+
+        <div class="post-card-info">
+            <span>👍 {{ comment.like_count }}</span>
+            <span>작성일: {{ comment.created_at|date:"Y-m-d H:i" }}</span>
+        </div>
+
+    </div>
+    {% endfor %}
+{% else %}
+    <p>아직 작성한 댓글이 없습니다.</p>
+{% endif %}
+
+{% endblock %}
+
