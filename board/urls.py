@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     post_list, post_detail, post_edit, post_delete,
     post_like_toggle, post_create, comment_create, comment_like_toggle,
- popular_posts,
+    popular_posts,
     my_posts, my_comments, my_scraps, post_scrap_toggle,
     PostList  # 추가된 API 뷰
 )
@@ -10,7 +10,6 @@ from .views import (
 app_name = 'board'
 
 urlpatterns = [
-
     # -------------------- 게시글 목록 --------------------
     path('', post_list, name='post_list'),  # HTML 게시글 목록
     path('category/<str:category>/', post_list, name='post_list_category'),  # 카테고리별 HTML 게시글 목록
@@ -28,14 +27,15 @@ urlpatterns = [
     path('<int:pk>/edit/', post_edit, name='post_edit'),  # 게시글 수정
     path('<int:pk>/delete/', post_delete, name='post_delete'),  # 게시글 삭제
 
-
     # -------------------- 게시글 좋아요 / 스크랩 --------------------
     path('<int:pk>/like-toggle/', post_like_toggle, name='post_like_toggle'),
     path('<int:pk>/scrap-toggle/', post_scrap_toggle, name='post_scrap_toggle'),
 
     # -------------------- 댓글 / 대댓글 --------------------
+    # 여기서 'add_comment'를 'comment_create'로 변경
     path('<int:post_pk>/comment/create/', comment_create, name='comment_create'),
     path('<int:post_pk>/comment/create/reply/<int:parent_pk>/', comment_create, name='comment_create_reply'),
+    
     path('comment/<int:pk>/like-toggle/', comment_like_toggle, name='comment_like_toggle'),
 
     # -------------------- 특수 게시글 --------------------

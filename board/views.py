@@ -5,7 +5,7 @@ from .models import Post, Comment
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import PostSerializer
+from .serializers import PostSerializer, CommentSerializer
 
 # 카테고리 딕셔너리
 CATEGORY_DISPLAY = dict(Post.CATEGORY_CHOICES)
@@ -27,14 +27,11 @@ def post_list(request, category=None):
     }
     return render(request, template_name, context)
 
-
-
-
 # -------------------- 인기글 --------------------
 def popular_posts(request):
+    # 인기글: 좋아요 수가 많은 순으로 정렬
     posts = Post.objects.annotate(like_count=Count('likes')).order_by('-like_count', '-id')
     return render(request, 'board/popular.html', {'posts': posts, 'category': '현재 인기글'})
-
 
 # -------------------- 내가 쓴 글 --------------------
 @login_required
@@ -42,13 +39,11 @@ def my_posts(request):
     posts = Post.objects.filter(user=request.user).order_by('-id')
     return render(request, 'board/post_list.html', {'posts': posts, 'category': '내가 쓴 글'})
 
-
 # -------------------- 내가 댓글 단 글 --------------------
 @login_required
 def my_comments(request):
     posts = Post.objects.filter(comments__user=request.user).distinct().order_by('-id')
     return render(request, 'board/post_list.html', {'posts': posts, 'category': '내가 댓글 단 글'})
-
 
 # -------------------- 내가 스크랩한 글 --------------------
 @login_required
@@ -56,19 +51,19 @@ def my_scraps(request):
     posts = Post.objects.filter(scraps=request.user).order_by('-id')
     return render(request, 'board/post_list.html', {'posts': posts, 'category': '내 스크랩'})
 
-
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     parent_comments = post.comments.filter(parent__isnull=True).order_by('-created_at')
-    
+
+    category = post.category  # 게시글의 카테고리
 
     context = {
         'post': post,
         'comments': parent_comments,
-        'page_title': post.title  # 제목을 게시글의 제목으로 설정
+        'page_title': post.title,  # 제목을 게시글의 제목으로 설정
+        'category': category,  # 카테고리 정보 추가
     }
     return render(request, 'board/board_detail.html', context)
-
 
 # -------------------- 게시글 작성 --------------------
 @login_required
@@ -98,10 +93,7 @@ def post_create(request, category=None):
         )
 
         # 리다이렉트: 특정 카테고리가 없다면 전체 게시판으로 리다이렉트
-        if category:
-            return redirect('board:post_list_category', category=category)
-        else:
-            return redirect('board:post_list')  # 카테고리 없이 리다이렉트
+        return redirect('board:post_list_category' if category else 'board:post_list', category=category)
 
     return render(
         request,
@@ -111,7 +103,6 @@ def post_create(request, category=None):
             'categories': CATEGORY_DISPLAY
         }
     )
-
 
 # -------------------- 게시글 수정 --------------------
 @login_required
@@ -136,9 +127,7 @@ def post_edit(request, pk):
 
     return render(request, 'board/post_edit_page.html', {'post': post})
 
-
 # -------------------- 게시글 삭제 --------------------
-
 @login_required
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -150,18 +139,6 @@ def post_delete(request, pk):
     # 삭제 후 해당 카테고리 게시판으로 리다이렉트
     return redirect('board:post_list_category', category=category)
 
-
-# -------------------- 게시글 좋아요 토글 --------------------
-@login_required
-def post_like_toggle(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    if request.user in post.likes.all():
-        post.likes.remove(request.user)
-    else:
-        post.likes.add(request.user)
-    return redirect('board:post_detail', pk=pk)
-
-
 # -------------------- 게시글 스크랩 토글 --------------------
 @login_required
 def post_scrap_toggle(request, pk):
@@ -171,7 +148,6 @@ def post_scrap_toggle(request, pk):
     else:
         post.scraps.add(request.user)
     return redirect('board:post_detail', pk=pk)
-
 
 # -------------------- 댓글/대댓글 작성 --------------------
 @login_required
@@ -192,7 +168,6 @@ def comment_create(request, post_pk, parent_pk=None):
         )
         return redirect('board:post_detail', pk=post.pk)
 
-
 # -------------------- 댓글 좋아요 토글 --------------------
 @login_required
 def comment_like_toggle(request, pk):
@@ -203,8 +178,18 @@ def comment_like_toggle(request, pk):
         comment.likes.add(request.user)
     return redirect('board:post_detail', pk=comment.post.pk)
 
+# -------------------- 게시글 좋아요 토글 --------------------
+@login_required
+def post_like_toggle(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    return redirect('board:post_detail', pk=pk)
 
-# 게시글 목록 API 뷰 (JSON)
+
+# -------------------- 게시글 목록 API --------------------
 class PostList(APIView):
     def get(self, request, category=None):
         if category:
@@ -215,3 +200,81 @@ class PostList(APIView):
         # 직렬화하여 JSON 형태로 반환
         serializer = PostSerializer(posts, many=True)
         return Response({'board_list': serializer.data}, status=status.HTTP_200_OK)
+
+# -------------------- 게시글 수정 API --------------------
+class PostEdit(APIView):
+    def patch(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        if request.user != post.user:
+            return Response({'error': 'You are not authorized to edit this post'}, status=status.HTTP_403_FORBIDDEN)
+
+        post.title = request.data.get('title', post.title)
+        post.content = request.data.get('content', post.content)
+        post.is_anonymous = bool(request.data.get('is_anonymous'))
+
+        # 파일 교체 가능하게 처리
+        if 'file' in request.FILES:
+            post.file = request.FILES.get('file')
+        if 'image' in request.FILES:
+            post.image = request.FILES.get('image')
+
+        post.save()
+        post_serializer = PostSerializer(post)
+        return Response(post_serializer.data, status=status.HTTP_200_OK)
+
+# -------------------- 게시글 삭제 API --------------------
+class PostDelete(APIView):
+    def delete(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+
+        if request.user == post.user:
+            category = post.category  # 게시글의 카테고리
+            post.delete()
+
+            # 삭제 후 해당 카테고리 게시판으로 리다이렉트
+            return Response({'category': category}, status=status.HTTP_200_OK)
+        return Response({'error': 'You are not authorized to delete this post'}, status=status.HTTP_403_FORBIDDEN)
+
+# -------------------- 게시글 좋아요 토글 API --------------------
+class PostLikeToggle(APIView):
+    def post(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        if request.user in post.likes.all():
+            post.likes.remove(request.user)
+        else:
+            post.likes.add(request.user)
+        
+        post_serializer = PostSerializer(post)
+        return Response(post_serializer.data, status=status.HTTP_200_OK)
+
+# -------------------- 댓글/대댓글 작성 API --------------------
+class CommentCreate(APIView):
+    def post(self, request, post_pk, parent_pk=None):
+        post = get_object_or_404(Post, pk=post_pk)
+        parent = get_object_or_404(Comment, pk=parent_pk) if parent_pk else None
+
+        content = request.data.get('content')
+        is_anonymous = bool(request.data.get('is_anonymous'))
+
+        comment = Comment.objects.create(
+            post=post,
+            user=request.user,
+            content=content,
+            parent=parent,
+            is_anonymous=is_anonymous
+        )
+
+        comment_serializer = CommentSerializer(comment)
+        return Response(comment_serializer.data, status=status.HTTP_201_CREATED)
+
+# -------------------- 댓글 좋아요 토글 API --------------------
+class CommentLikeToggle(APIView):
+    def post(self, request, pk):
+        comment = get_object_or_404(Comment, pk=pk)
+        if request.user in comment.likes.all():
+            comment.likes.remove(request.user)
+        else:
+            comment.likes.add(request.user)
+
+        comment_serializer = CommentSerializer(comment)
+        return Response(comment_serializer.data, status=status.HTTP_200_OK)
