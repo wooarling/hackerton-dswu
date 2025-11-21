@@ -95,188 +95,126 @@
     </script>
 
 <!---------------------------------------------------------------------->
-    <!--댓글 목록을 담을 영역-->
-    <div id="comment-list"></div>
+    <!--댓글 & 대댓글 목록 불러오기-->
+    <div id="comment-list">
+  {% for c in comments %}
     
-    <script>
-   function loadBoardList() { 
-  fetch(`/api/board/${boardId}/comment/`)
-    .then(res => res.json())
-    .then(data => {
-      const commentList = document.getElementById("comment-list");
-      commentList.innerHTML = "";
+    {% if not c.parent %}
+    <!-- 부모 댓글 -->
+    <div class="comment-item" id="comment-{{ c.id }}">
+    {% else %}
+    <!-- 대댓글 -->
+    <div class="comment-item" id="comment-{{ c.id }}" style="margin-left:20px;">
+    {% endif %}
       
-      data.comment.forEach(c => {
-        const div = document.createElement("div");
-        div.className = "comment-item";
-        div.id = `comment-${c.id}`;   //댓글에 id를 붙여준다 (대댓글의 경우 부모댓글을 찾기위해)
+      <div class="comment-top">
+        <span class="comment-author">{{ c.user|default:"익명" }}</span>
 
-        div.innerHTML = `
-        <div class="comment-top">
-          <span class="comment-author">${c.user || "익명"}</span>
-          <div class="comment-actions">
-            <!-- 좋아요 버튼 -->
-          <button class="comment-like-btn" data-id="${c.id}">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div class="comment-actions">
+          <!-- 댓글 좋아요 버튼 -->
+          <form action="{% url 'board:comment_like_toggle' c.id %}" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="comment-like-btn">
+              
+              {% if user in c.likes.all %}
+              <!-- 좋아요 눌린 상태 -->
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="#E4A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+              {% else %}
+              <!-- 기본 상태 -->
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg></button>
+</svg>
+              {% endif %}
+            </button>
+          </form>
 
           <!-- 대댓글 버튼 -->
-          <button class="reply-btn" data-id="${c.id}">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M3 15C3 15.5304 3.21071 16.0391 3.58579 16.4142C3.96086 16.7893 4.46957 17 5 17H17L21 21V5C21 4.46957 20.7893 3.96086 20.4142 3.58579C20.0391 3.21071 19.5304 3 19 3H5C4.46957 3 3.96086 3.21071 3.58579 3.58579C3.21071 3.96086 3 4.46957 3 5V15Z" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>/button>
-          </div>
-        </div>
-
-          <p class="comment-content">${c.content}</p>
           
-          <div class="comment-bottom">
-            <span class="comment-date">${c.date}</span>
-          <!-- 좋아요 수 표시 -->
-          <span class="comment-like-count" id="comment-like-count-${c.id}">
-            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_102_601)">
-<path d="M3.20817 5.04163L5.0415 0.916626C5.40618 0.916626 5.75591 1.06149 6.01378 1.31935C6.27164 1.57722 6.4165 1.92695 6.4165 2.29163V4.12496H9.01067C9.14355 4.12345 9.27516 4.15086 9.39639 4.20527C9.51762 4.25968 9.62558 4.3398 9.71277 4.44007C9.79997 4.54034 9.86432 4.65838 9.90137 4.78599C9.93842 4.9136 9.94728 5.04775 9.92734 5.17913L9.29484 9.30413C9.26169 9.52271 9.15066 9.72195 8.98221 9.86513C8.81376 10.0083 8.59924 10.0858 8.37817 10.0833H3.20817M3.20817 5.04163V10.0833M3.20817 5.04163H1.83317C1.59006 5.04163 1.3569 5.1382 1.18499 5.31011C1.01308 5.48202 0.916504 5.71518 0.916504 5.95829V9.16663C0.916504 9.40974 1.01308 9.6429 1.18499 9.81481C1.3569 9.98672 1.59006 10.0833 1.83317 10.0833H3.20817" stroke="#BA1A1A" stroke-opacity="0.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <button type="submit" class="reply-btn"  data-id="{{ c.id }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M3 15C3 15.5304 3.21071 16.0391 3.58579 16.4142C3.96086 16.7893 4.46957 17 5 17H17L21 21V5C21 4.46957 20.7893 3.96086 20.4142 3.58579C20.0391 3.21071 19.5304 3 19 3H5C4.46957 3 3.96086 3.21071 3.58579 3.58579C3.21071 3.96086 3 4.46957 3 5V15Z" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</button>
+        
+        </div>
+      </div>
+
+      <p class="comment-content">{{ c.content }}</p>
+
+      <div class="comment-bottom">
+        <span class="comment-date">{{ c.date }}</span>
+
+        <span class="comment-like-count">
+          <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_99_393)">
+<path d="M3.20841 5.04163L5.04175 0.916626C5.40642 0.916626 5.75616 1.06149 6.01402 1.31935C6.27188 1.57722 6.41675 1.92695 6.41675 2.29163V4.12496H9.01091C9.14379 4.12345 9.2754 4.15086 9.39664 4.20527C9.51787 4.25968 9.62582 4.3398 9.71302 4.44007C9.80021 4.54034 9.86456 4.65838 9.90161 4.78599C9.93866 4.9136 9.94752 5.04775 9.92758 5.17913L9.29508 9.30413C9.26193 9.52271 9.15091 9.72195 8.98246 9.86513C8.814 10.0083 8.59948 10.0858 8.37842 10.0833H3.20841M3.20841 5.04163V10.0833M3.20841 5.04163H1.83341C1.5903 5.04163 1.35714 5.1382 1.18523 5.31011C1.01333 5.48202 0.916748 5.71518 0.916748 5.95829V9.16663C0.916748 9.40974 1.01333 9.6429 1.18523 9.81481C1.35714 9.98672 1.5903 10.0833 1.83341 10.0833H3.20841" stroke="#BA1A1A" stroke-opacity="0.4" stroke-linecap="round" stroke-linejoin="round"/>
 </g>
 <defs>
-<clipPath id="clip0_102_601">
+<clipPath id="clip0_99_393">
 <rect width="11" height="11" fill="white"/>
 </clipPath>
 </defs>
 </svg>
- ${c.like_count || 0}
-          </span>
-          </div>
-          
+ {{ c.like_count }}
+        </span>
+      </div>
+    </div>
+
+  {% endfor %}
+</div>
+
         `;
 
-        // 좋아요 버튼 이벤트 (forEach 내부에서 div 참조 가능)
-        div.querySelector(".comment-like-btn").addEventListener("click", (e) => {
-          const commentId = e.currentTarget.dataset.id;
-          fetch(`/comment/${commentId}/like-toggle/`, { method: "POST" })
-            .then(res => res.json())
-            .then(data => {
-              // 좋아요 수 갱신
-              document.getElementById(`comment-like-count-${commentId}`).innerHTML = `
-                <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g clip-path="url(#clip0_102_601)">
-<path d="M3.20817 5.04163L5.0415 0.916626C5.40618 0.916626 5.75591 1.06149 6.01378 1.31935C6.27164 1.57722 6.4165 1.92695 6.4165 2.29163V4.12496H9.01067C9.14355 4.12345 9.27516 4.15086 9.39639 4.20527C9.51762 4.25968 9.62558 4.3398 9.71277 4.44007C9.79997 4.54034 9.86432 4.65838 9.90137 4.78599C9.93842 4.9136 9.94728 5.04775 9.92734 5.17913L9.29484 9.30413C9.26169 9.52271 9.15066 9.72195 8.98221 9.86513C8.81376 10.0083 8.59924 10.0858 8.37817 10.0833H3.20817M3.20817 5.04163V10.0833M3.20817 5.04163H1.83317C1.59006 5.04163 1.3569 5.1382 1.18499 5.31011C1.01308 5.48202 0.916504 5.71518 0.916504 5.95829V9.16663C0.916504 9.40974 1.01308 9.6429 1.18499 9.81481C1.3569 9.98672 1.59006 10.0833 1.83317 10.0833H3.20817" stroke="#BA1A1A" stroke-opacity="0.4" stroke-linecap="round" stroke-linejoin="round"/>
-</g>
-<defs>
-<clipPath id="clip0_102_601">
-<rect width="11" height="11" fill="white"/>
-</clipPath>
-</defs>
-</svg>
- ${data.like_count}
-              `;
-               // 버튼 SVG 교체 (회색 ↔ 빨간색)
-              const btn = e.currentTarget;
-              if (btn.classList.contains("liked")) {
-                // 좋아요 취소 → 회색
-                btn.innerHTML = `
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
 
-                `;
-                btn.classList.remove("liked");
-              } else {
-                // 좋아요 상태 → 빨간색
-                btn.innerHTML = `
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+
+<!--댓글 좋아요 처리 → form 방식-->
+       <form action="{% url 'board:comment_like_toggle' c.id %}" method="POST">
+  {% csrf_token %}
+  <button type="submit" class="comment-like-btn">
+    {% if user in c.likes.all %}
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="#E4A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 
-                `;
-                btn.classList.add("liked");
-              }
-            });
-        });
+    {% else %}
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
 
-        // 대댓글 버튼 이벤트
-        div.querySelector(".reply-btn").addEventListener("click", (e) => {
-          const commentId = e.currentTarget.dataset.id;
-          div.style.backgroundColor = "#DBDEF625";
-          const input = document.getElementById("commentInput");
-          input.placeholder = "대댓글을 입력하세요";
-          input.setAttribute("data-parent-id", commentId);
-        });
+    {% endif %}
+  </button>
+</form>
 
-        // 부모 댓글이면 바로 추가
-        if (!c.parent_id) {
-          commentList.appendChild(div);
-        } else {
-          // 대댓글이면 부모 댓글 아래에 추가
-          const parentDiv = document.getElementById(`comment-${c.parent_id}`);
-          if (parentDiv) {
-            // 들여쓰기용 wrapper
-            const replyWrapper = document.createElement("div");
-            replyWrapper.style.marginLeft = "20px";
-            replyWrapper.appendChild(div);
-            parentDiv.appendChild(replyWrapper);
-          } else {
-            // 부모 못 찾으면 그냥 목록에 추가
-            commentList.appendChild(div);
-          }
-        }
-      });
-    });
-}
 
-loadBoardList();
-
-////////////////////////////////// 댓글 작성 이벤트
-document.getElementById("submitComment").addEventListener("click", () => {   // 댓글 작성 버튼을 눌렀을때
-  const content = document.getElementById("commentText").value.trim();       // commentText에 사용자가 입력한 내용을 가져온다
-  const anonymous = document.getElementById("anonymousToggle").checked;      // 익명 체크박스가 체크되어있는지 확인 (체크면 true)
-  const parentId = document.getElementById("commentText").dataset.parentId || null;  //대댓글일 경우 parentId에 저장. 없으면 null -> 일반 댓글이라는 뜻
-
-  if (!content) return; //댓글이 비어있으면 아무것도 하지 않고 함수종료
-
-  fetch(`/api/board/${boardId}/comment/`, {  // /api/board/${boardId}/comment/ 주소로 댓글을 post방식으로 보냄
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      content,
-      anonymous,          // 서버에 보낼 데이터 -> 댓글 내용, 익명여부, 대댓글이면 부모댓글 Id 아니면 null값을 보냄
-      parent_id: parentId
-    })
-  })
-  .then(res => res.json())  // 서버의 응답을 json으로 받기
-  .then(data => {
-    document.getElementById("commentText").value = "";
-    document.getElementById("commentText").removeAttribute("data-parent-id");  //대댓글 모드 해제
-    document.getElementById("commentText").placeholder = "댓글을 입력하세요";  // placeholder 복원
-    loadBoardList();
-  });
-});
-
-// 초기 로딩
-loadBoardList();
-commentList.scrollIntoView({ behavior: "smooth", block: "end" });
-
-    </script>
+        
   
   <!---------------------------댓글 작성 영역 --------------------------------->
 
 <!-- 댓글 입력 영역 -->
   <div class="comment-box-wrapper">
     <div class="comment-box">
+      <!-- 댓글 작성 폼 -->
+    <form action="{% url 'board:add_comment' board.id %}" method="POST">
+      {% csrf_token %}
+
       <!-- 익명 체크박스 -->
       <label class="anonymous-toggle">
-        <input type="checkbox" id="anonymousToggle" />
+        <input type="checkbox" id="anonymousToggle"  name="anonymous"/>
         <label for="anonymousToggle" class="anonymous-label">
             익명
         </label>
       </label>
 
       <!-- 댓글 입력창 -->
-      <input type="text" id="commentText" placeholder="댓글을 입력하세요" />
+      <input type="text" id="commentText" name="content" placeholder="댓글을 입력하세요" />
+
+      <!-- 부모 댓글 ID (대댓글일 경우 세팅됨) -->
+      <input type="hidden" name="parent_id" id="parentIdInput" />
 
       <!-- 제출 버튼 (SVG 아이콘 포함) -->
-      <button id="submitComment" class="send-button" aria-label="댓글 작성">
+      <button type="submit" class="send-button" aria-label="댓글 작성">
         <svg width="34" height="35" viewBox="0 0 34 35" fill="none" xmlns="http://www.w3.org/2000/svg">
         <g filter="url(#filter0_d_131_211)">
 <path d="M28.3333 2.33337L15.5 15.1667M28.3333 2.33337L20.1667 25.6667L15.5 15.1667M28.3333 2.33337L5 10.5L15.5 15.1667" stroke="#00024F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -294,9 +232,21 @@ commentList.scrollIntoView({ behavior: "smooth", block: "end" });
 </filter>
         </defs>
         </svg>
-
+      
       </button>
+      </form>
     </div>
   </div>
 
+  <script>
+    // 대댓글 버튼 클릭 시 parent_id 세팅
+document.querySelectorAll(".reply-btn").forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    const commentId = e.currentTarget.dataset.id;
+    document.getElementById("parentIdInput").value = commentId;
+    document.getElementById("commentText").placeholder = "대댓글을 입력하세요";
+  });
+});
+
+  </script>
    {% endblock %}
