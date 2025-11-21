@@ -13,8 +13,9 @@ class Post(models.Model):
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE
-        
+        on_delete=models.CASCADE,
+        null=True,  # 익명 게시글을 위한 user 필드 null=True 설정
+        blank=True  # 빈 값 허용
     )  # 작성자
     title = models.CharField(max_length=200)  # 게시글 제목
     content = models.TextField()  # 게시글 내용
@@ -23,7 +24,7 @@ class Post(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)  # 생성일
     updated_at = models.DateTimeField(auto_now=True)  # 수정일
 
-    # 🔥 추가된 파일 업로드 필드들
+    # 추가된 파일 업로드 필드들
     file = models.FileField(
         upload_to="uploads/files/",
         null=True,
@@ -63,7 +64,9 @@ class Post(models.Model):
         return self.comments.count()
 
     def __str__(self):
-        return f"[{self.get_category_display()}] {self.title}"
+        # 게시글이 익명일 경우 '익명'으로 표시, 아니면 작성자 이름을 표시
+        username = "익명" if self.is_anonymous else self.user.username
+        return f"[{self.get_category_display()}] {username} - {self.title}"
 
 
 class Comment(models.Model):
@@ -74,7 +77,9 @@ class Comment(models.Model):
     )  # 게시글과 연결
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE, 
+        null=True,  # 익명 댓글을 허용하기 위해 user가 null일 수 있도록 설정
+        blank=True  # 익명 댓글 시 빈 값도 허용
     )  # 댓글 작성자
     content = models.TextField()  # 댓글 내용
     parent = models.ForeignKey(
@@ -101,5 +106,6 @@ class Comment(models.Model):
         return self.likes.count()
 
     def __str__(self):
+        # 익명일 경우 '익명'으로 표시, 아니면 사용자 이름을 표시
         username = "익명" if self.is_anonymous else self.user.username
         return f"{username}: {self.content[:20]}"

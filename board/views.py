@@ -65,7 +65,6 @@ def post_detail(request, pk):
     }
     return render(request, 'board/board_detail.html', context)
 
-# -------------------- 게시글 작성 --------------------
 @login_required
 def post_create(request, category=None):
     if request.method == 'POST':
@@ -83,7 +82,7 @@ def post_create(request, category=None):
 
         # 게시글 생성
         post = Post.objects.create(
-            user=request.user,
+            user=None if is_anonymous else request.user,  # 익명일 경우 user는 None으로 설정
             title=title,
             content=content,
             category=category,
@@ -103,6 +102,8 @@ def post_create(request, category=None):
             'categories': CATEGORY_DISPLAY
         }
     )
+
+
 
 # -------------------- 게시글 수정 --------------------
 @login_required
@@ -149,7 +150,6 @@ def post_scrap_toggle(request, pk):
         post.scraps.add(request.user)
     return redirect('board:post_detail', pk=pk)
 
-# -------------------- 댓글/대댓글 작성 --------------------
 @login_required
 def comment_create(request, post_pk, parent_pk=None):
     post = get_object_or_404(Post, pk=post_pk)
@@ -157,16 +157,24 @@ def comment_create(request, post_pk, parent_pk=None):
 
     if request.method == 'POST':
         content = request.POST.get('content')
-        is_anonymous = bool(request.POST.get('is_anonymous'))
+        is_anonymous = request.POST.get('is_anonymous') == 'on'  # 'on' 값으로 체크
 
-        Comment.objects.create(
+        # 익명 댓글일 때 user는 None으로 설정
+        user = request.user if not is_anonymous else None
+
+        # 댓글 또는 대댓글 생성
+        comment = Comment.objects.create(
             post=post,
-            user=request.user,
+            user=user,  # 익명 댓글일 때는 None, 아니면 로그인한 user
             content=content,
             parent=parent,
             is_anonymous=is_anonymous
         )
         return redirect('board:post_detail', pk=post.pk)
+
+    return redirect('board:post_detail', pk=post.pk)
+
+
 
 # -------------------- 댓글 좋아요 토글 --------------------
 @login_required

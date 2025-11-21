@@ -46,7 +46,15 @@
                         <span>좋아요: {{ post.like_count }}</span>
                         <span>댓글: {{ post.comment_count }}</span>
                         <span>{{ post.date }}</span>
-                        <span>{{ post.user }}</span>
+
+                        <!-- 작성자 이름 처리: 익명일 경우 '익명'으로 표시 -->
+                        <span>
+                            {% if post.is_anonymous %}
+                                익명
+                            {% else %}
+                                {{ post.user.username }}
+                            {% endif %}
+                        </span>
                     </div>
                 </div>
             {% endfor %}
@@ -56,3 +64,4 @@
     </div>
 
 {% endblock %}
+
