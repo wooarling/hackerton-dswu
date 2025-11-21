@@ -120,8 +120,24 @@
         </p>
 
         <div class="post-card-info">
-            <span>👍 {{ post.like_count }}</span>
-            <span>💬 {{ post.comment_set.count }}</span>
+            <span>
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#clip0_70_183)">
+            <path d="M3.5 5.5L5.5 1C5.89782 1 6.27936 1.15804 6.56066 1.43934C6.84196 1.72064 7 2.10218 7 2.5V4.5H9.83C9.97495 4.49836 10.1185 4.52825 10.2508 4.58761C10.383 4.64697 10.5008 4.73437 10.5959 4.84376C10.6911 4.95315 10.7613 5.08191 10.8017 5.22113C10.8421 5.36034 10.8518 5.50668 10.83 5.65L10.14 10.15C10.1038 10.3885 9.98272 10.6058 9.79895 10.762C9.61519 10.9182 9.38116 11.0027 9.14 11H3.5M3.5 5.5V11M3.5 5.5H2C1.73478 5.5 1.48043 5.60536 1.29289 5.79289C1.10536 5.98043 1 6.23478 1 6.5V10C1 10.2652 1.10536 10.5196 1.29289 10.7071C1.48043 10.8946 1.73478 11 2 11H3.5" 
+            stroke="#BA1A1A" stroke-opacity="0.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+    </svg>
+
+    {{ post.like_count }}
+</span>
+
+            <span>
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1.5 7.5C1.5 7.76522 1.60536 8.01957 1.79289 8.20711C1.98043 8.39464 2.23478 8.5 2.5 8.5H8.5L10.5 10.5V2.5C10.5 2.23478 10.3946 1.98043 10.2071 1.79289C10.0196 1.60536 9.76522 1.5 9.5 1.5H2.5C2.23478 1.5 1.98043 1.60536 1.79289 1.79289C1.60536 1.98043 1.5 2.23478 1.5 2.5V7.5Z" 
+        stroke="#000477" stroke-opacity="0.37" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    {{ post.comment_set.count }}
+</span>
             <span>작성일: {{ post.date|date:"Y-m-d H:i" }}</span>
         </div>
 
@@ -142,3 +158,4 @@
 {% endif %}
 
 {% endblock %}
+
