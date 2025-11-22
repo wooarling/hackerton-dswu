@@ -42,14 +42,17 @@ def my_posts(request):
 # -------------------- 내가 댓글 단 글 --------------------
 @login_required
 def my_comments(request):
-    posts = Post.objects.filter(comments__user=request.user).distinct().order_by('-id')
-    return render(request, 'board/post_list.html', {'posts': posts, 'category': '내가 댓글 단 글'})
+    # 사용자가 댓글을 단 게시물들을 가져옴 
+    comments = Comment.objects.filter(user=request.user).order_by('-created_at')  # 댓글을 기준으로 정렬
+    return render(request, 'board/comment_list.html', {'comments': comments, 'category': '내가 댓글 단 글'})
+
 
 # -------------------- 내가 스크랩한 글 --------------------
 @login_required
 def my_scraps(request):
-    posts = Post.objects.filter(scraps=request.user).order_by('-id')
-    return render(request, 'board/post_list.html', {'posts': posts, 'category': '내 스크랩'})
+    # 현재 사용자가 스크랩한 글들을 필터링하여 가져오기
+    scraps = Post.objects.filter(scraps=request.user).order_by('-id')
+    return render(request, 'board/scrap_list.html', {'scraps': scraps, 'category': '내 스크랩'})
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
