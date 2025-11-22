@@ -14,7 +14,8 @@
 <body>
 
     <header class="page_header">
-        <button class="back_btn" onclick="history.back();">←</button>
+        <!-- 뒤로가기 버튼을 history.back() 대신 goBack() 함수로 처리 -->
+        <button class="back_btn" onclick="goBack()">←</button>
         <div class="title">
             <h1 class="main_title">직무 적성 테스트</h1>
         </div>
@@ -27,10 +28,17 @@
             <div class="sub_text">자신에게 맞는 선택지를 골라 적성에 맞는 직무를 알아봐요!</div>
         </div>
 
-        <!-- 테스트 시작 버튼: test_page로 이동 -->
+        <!-- 테스트 시작 버튼: it_test:test_page로 이동 -->
         <a href="{% url 'it_test:test_page' %}" class="btn btn_big2">테스트 시작하기</a>
 
     </div>
+
+    <!-- 뒤로 가기 함수 정의 -->
+    <script>
+        function goBack() {
+            window.history.back();  // 이전 페이지로 돌아가기
+        }
+    </script>
 
 </body>
 </html>
