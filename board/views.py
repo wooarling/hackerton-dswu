@@ -65,6 +65,7 @@ def post_detail(request, pk):
     }
     return render(request, 'board/board_detail.html', context)
 
+# -------------------- 게시글 생성 --------------------
 @login_required
 def post_create(request, category=None):
     if request.method == 'POST':
@@ -103,15 +104,13 @@ def post_create(request, category=None):
         }
     )
 
-
-
 # -------------------- 게시글 수정 --------------------
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
-    # 로그인한 사용자만 수정할 수 있도록 처리
-    if request.user != post.user:
+    # 로그인한 사용자만 수정할 수 있도록 처리 (익명 글이라도 수정 권한 부여)
+    if request.user != post.user and post.user is not None:
         return redirect('board:post_detail', pk=pk)
 
     if request.method == 'POST':
@@ -150,8 +149,8 @@ def post_edit(request, pk):
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
-    # 게시글을 삭제하는 사용자 확인
-    if request.user == post.user:
+    # 게시글을 삭제하는 사용자 확인 (익명 글도 삭제 가능)
+    if request.user == post.user or post.user is None:
         category = post.category  # 게시글의 카테고리
         post.delete()
         
@@ -171,6 +170,7 @@ def post_scrap_toggle(request, pk):
         post.scraps.add(request.user)
     return redirect('board:post_detail', pk=pk)
 
+# -------------------- 댓글 작성 --------------------
 @login_required
 def comment_create(request, post_pk, parent_pk=None):
     post = get_object_or_404(Post, pk=post_pk)
@@ -195,8 +195,6 @@ def comment_create(request, post_pk, parent_pk=None):
 
     return redirect('board:post_detail', pk=post.pk)
 
-
-
 # -------------------- 댓글 좋아요 토글 --------------------
 @login_required
 def comment_like_toggle(request, pk):
@@ -216,7 +214,6 @@ def post_like_toggle(request, pk):
     else:
         post.likes.add(request.user)
     return redirect('board:post_detail', pk=pk)
-
 
 # -------------------- 게시글 목록 API --------------------
 class PostList(APIView):
@@ -277,7 +274,6 @@ class PostLikeToggle(APIView):
         return Response(post_serializer.data, status=status.HTTP_200_OK)
 
 # -------------------- 댓글/대댓글 작성 API --------------------
-# 댓글 작성 시 익명 여부와 관계없이 작성자(user) 설정
 class CommentCreate(APIView):
     def post(self, request, post_pk, parent_pk=None):
         post = get_object_or_404(Post, pk=post_pk)
@@ -300,7 +296,6 @@ class CommentCreate(APIView):
         comment_serializer = CommentSerializer(comment)
         return Response(comment_serializer.data, status=status.HTTP_201_CREATED)
 
-
 # -------------------- 댓글 좋아요 토글 API --------------------
 class CommentLikeToggle(APIView):
     def post(self, request, pk):
@@ -318,8 +313,7 @@ def comment_edit(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
 
     # 해당 댓글의 작성자가 아닌 경우 접근 불가
-    # 수정 권한을 익명 여부와 관계없이 작성자에게만 부여
-    if request.user != comment.user:
+    if request.user != comment.user and comment.user is not None:
         return redirect('board:post_detail', pk=comment.post.pk)
 
     if request.method == 'POST':
@@ -333,15 +327,13 @@ def comment_edit(request, pk):
 
     return render(request, 'board/comment_edit_page.html', {'comment': comment})
 
-
-
 # -------------------- 댓글 삭제 --------------------
 @login_required
 def comment_delete(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
 
-    # 댓글 작성자만 삭제 가능
-    if request.user == comment.user:
+    # 댓글 작성자만 삭제 가능 (익명 댓글도 삭제 가능)
+    if request.user == comment.user or comment.user is None:
         comment.delete()
 
     # 삭제 후 원래의 게시글 상세 페이지로 리다이렉트
