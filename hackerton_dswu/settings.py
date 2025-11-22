@@ -118,9 +118,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # 지역화
 # -----------------------------
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+
+# 시간대 설정을 서울로 변경
+TIME_ZONE = 'Asia/Seoul'  # 서울 시간으로 설정
 USE_I18N = True
-USE_TZ = True
+USE_TZ = True  # 시간대 사용을 활성화
 
 # -----------------------------
 # 정적 파일(CSS, JS)
