@@ -91,10 +91,10 @@
 
         <p style="font-size: 14px;">
             작성자: 
-            {% if comment.post.is_anonymous %}
-                익명
+            {% if comment.user %}
+                {{ comment.user.username }}
             {% else %}
-                {{ comment.post.user.username }}
+                익명
             {% endif %}
             | 좋아요: {{ comment.post.like_count }}
         </p>
@@ -102,7 +102,7 @@
         <div class="post-card-info">
             <span>👍 {{ comment.post.like_count }}</span>
             <span>💬 {{ comment.post.comment_set.count }}</span>
-            <span>작성일: {{ comment.post.created_at|date:"Y-m-d H:i" }}</span>
+            <span>작성일: {{ comment.created_at|date:"Y-m-d H:i" }}</span>
         </div>
 
     </div>
