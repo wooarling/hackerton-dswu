@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}댓글 수정{% endblock %}
+
+{% block content %}
+<style>
+/* 스타일을 그대로 두거나, 필요에 맞게 수정 가능합니다. */
+.content-area {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding-top: 50px;
+  box-sizing: border-box;
+}
+
+#edit-comment-form {
+  width: 100%;
+  max-width: 900px;
+  background-color: white;
+  padding: 50px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(14, 3, 3, 0.15);
+}
+
+h1, h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+#edit-comment-form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.button-group button.update-btn {
+  flex: 1;
+  background-color: #0217c2;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.button-group button.delete-btn {
+  background-color: rgb(24, 11, 212);
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 6px;
+  width: auto;
+}
+</style>
+
+<div id="board-content">
+  <div class="content-area">
+    <form id="edit-comment-form" method="post" action="{% url 'board:comment_edit' comment.pk %}">
+      {% csrf_token %}
+      <h1>댓글 수정</h1>
+
+      <!-- 댓글 내용 -->
+      <label for="content">댓글 내용</label>
+      <textarea id="content" name="content" rows="6">{{ comment.content }}</textarea>
+
+      <!-- 익명 체크박스 추가 -->
+      <label for="is_anonymous">
+        <input type="checkbox" name="is_anonymous" id="is_anonymous" {% if comment.is_anonymous %} checked {% endif %}> 익명으로 댓글 작성
+      </label>
+
+      <div class="button-group">
+        <!-- 댓글 수정 버튼 -->
+        <button type="submit" class="update-btn">댓글 수정</button>
+
+        <!-- 댓글 삭제 버튼 -->
+        <button type="submit" formaction="{% url 'board:comment_delete' comment.pk %}" formmethod="post"
+                class="delete-btn" onclick="return confirm('정말 삭제하시겠습니까?');">
+          삭제
+        </button>
+      </div>
+
+      <br><br>
+      <!-- 취소 버튼 -->
+      <a href="{% url 'board:post_detail' comment.post.pk %}">취소</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

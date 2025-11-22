@@ -3,7 +3,7 @@ from .views import (
     post_list, post_detail, post_edit, post_delete,
     post_like_toggle, post_create, comment_create, comment_like_toggle,
     popular_posts,
-    my_posts, my_comments, my_scraps, post_scrap_toggle,
+    my_posts, my_comments, my_scraps, post_scrap_toggle, comment_edit,comment_delete,
     PostList  # 추가된 API 뷰
 )
 
@@ -32,10 +32,8 @@ urlpatterns = [
     path('<int:pk>/scrap-toggle/', post_scrap_toggle, name='post_scrap_toggle'),
 
     # -------------------- 댓글 / 대댓글 --------------------
-    # 여기서 'add_comment'를 'comment_create'로 변경
     path('<int:post_pk>/comment/create/', comment_create, name='comment_create'),
     path('<int:post_pk>/comment/create/reply/<int:parent_pk>/', comment_create, name='comment_create_reply'),
-    
     path('comment/<int:pk>/like-toggle/', comment_like_toggle, name='comment_like_toggle'),
 
     # -------------------- 특수 게시글 --------------------
@@ -45,4 +43,9 @@ urlpatterns = [
     path('my-posts/', my_posts, name='my_posts'),
     path('my-comments/', my_comments, name='my_comments'),
     path('my-scraps/', my_scraps, name='my_scraps'),
+
+    # -------------------- 댓글 수정 --------------------
+    path('comment/edit/<int:pk>/', comment_edit, name='comment_edit'),  # views.comment_edit로 수정
+    path('comment/delete/<int:pk>/',comment_delete, name='comment_delete'),  # 댓글 삭제 URL
 ]
+

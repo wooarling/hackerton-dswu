@@ -109,23 +109,40 @@ def post_create(request, category=None):
 @login_required
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
+
+    # 로그인한 사용자만 수정할 수 있도록 처리
     if request.user != post.user:
         return redirect('board:post_detail', pk=pk)
 
     if request.method == 'POST':
-        post.title = request.POST.get('title')
-        post.content = request.POST.get('content')
+        # 제목과 내용이 빈 값인지 체크
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+
+        if not title or not content:
+            # 제목과 내용이 빈 값일 경우, 에러 메시지 출력
+            return render(request, 'board/post_edit_page.html', {
+                'post': post,
+                'error': '제목과 내용을 모두 입력해 주세요.'
+            })
+
+        # 폼 데이터 처리
+        post.title = title
+        post.content = content
         post.is_anonymous = bool(request.POST.get('is_anonymous'))
 
-        # 파일 교체 가능하게 처리
+        # 파일 처리 (새로운 파일을 올리면 기존 파일 교체)
         if request.FILES.get('file'):
             post.file = request.FILES.get('file')
         if request.FILES.get('image'):
             post.image = request.FILES.get('image')
 
+        # 게시글 수정 후 저장
         post.save()
+
         return redirect('board:post_detail', pk=pk)
 
+    # GET 요청일 때, 수정 페이지 렌더링
     return render(request, 'board/post_edit_page.html', {'post': post})
 
 # -------------------- 게시글 삭제 --------------------
@@ -133,12 +150,16 @@ def post_edit(request, pk):
 def post_delete(request, pk):
     post = get_object_or_404(Post, pk=pk)
 
+    # 게시글을 삭제하는 사용자 확인
     if request.user == post.user:
         category = post.category  # 게시글의 카테고리
         post.delete()
+        
+        # 삭제 후 해당 카테고리 게시판으로 리다이렉트
+        return redirect('board:post_list_category', category=category)
 
-    # 삭제 후 해당 카테고리 게시판으로 리다이렉트
-    return redirect('board:post_list_category', category=category)
+    # 게시글을 삭제할 권한이 없으면 상세 페이지로 리다이렉트
+    return redirect('board:post_detail', pk=pk)
 
 # -------------------- 게시글 스크랩 토글 --------------------
 @login_required
@@ -256,6 +277,7 @@ class PostLikeToggle(APIView):
         return Response(post_serializer.data, status=status.HTTP_200_OK)
 
 # -------------------- 댓글/대댓글 작성 API --------------------
+# 댓글 작성 시 익명 여부와 관계없이 작성자(user) 설정
 class CommentCreate(APIView):
     def post(self, request, post_pk, parent_pk=None):
         post = get_object_or_404(Post, pk=post_pk)
@@ -264,16 +286,20 @@ class CommentCreate(APIView):
         content = request.data.get('content')
         is_anonymous = bool(request.data.get('is_anonymous'))
 
+        # 익명 댓글인 경우 user는 null로 설정, 아니면 작성자의 user로 설정
+        user = request.user if not is_anonymous else None
+
         comment = Comment.objects.create(
-            post=post,
-            user=request.user,
+            post=post, 
             content=content,
             parent=parent,
-            is_anonymous=is_anonymous
+            is_anonymous=is_anonymous,
+            user=user  # 익명 여부에 따라 user 설정
         )
 
         comment_serializer = CommentSerializer(comment)
         return Response(comment_serializer.data, status=status.HTTP_201_CREATED)
+
 
 # -------------------- 댓글 좋아요 토글 API --------------------
 class CommentLikeToggle(APIView):
@@ -286,3 +312,37 @@ class CommentLikeToggle(APIView):
 
         comment_serializer = CommentSerializer(comment)
         return Response(comment_serializer.data, status=status.HTTP_200_OK)
+    
+@login_required
+def comment_edit(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+
+    # 해당 댓글의 작성자가 아닌 경우 접근 불가
+    # 수정 권한을 익명 여부와 관계없이 작성자에게만 부여
+    if request.user != comment.user:
+        return redirect('board:post_detail', pk=comment.post.pk)
+
+    if request.method == 'POST':
+        # 댓글 수정
+        comment.content = request.POST.get('content')
+        comment.is_anonymous = bool(request.POST.get('is_anonymous'))  # 수정 시 익명 여부 처리
+
+        # 수정한 댓글 저장
+        comment.save()
+        return redirect('board:post_detail', pk=comment.post.pk)
+
+    return render(request, 'board/comment_edit_page.html', {'comment': comment})
+
+
+
+# -------------------- 댓글 삭제 --------------------
+@login_required
+def comment_delete(request, pk):
+    comment = get_object_or_404(Comment, pk=pk)
+
+    # 댓글 작성자만 삭제 가능
+    if request.user == comment.user:
+        comment.delete()
+
+    # 삭제 후 원래의 게시글 상세 페이지로 리다이렉트
+    return redirect('board:post_detail', pk=comment.post.pk)

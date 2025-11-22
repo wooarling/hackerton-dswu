@@ -9,118 +9,79 @@
 
 {% block content %}
         
-  <!-----------게시판 상세페이지 글 ------------------------------------------------->
-    <div class="board-detail">
-        <div class="board-header"> 
-            <a href="{% url 'board:post_list_category' category=post.category %}" class="back-button" aria-label="이전 페이지로 이동">
-                <!-- 뒤로가기 아이콘 -->
-                <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M16.6249 17.5L23.3333 24.2083L21.2916 26.25L12.5416 17.5L21.2916 8.75L23.3333 10.7917L16.6249 17.5Z" fill="black" fill-opacity="0.28"/>
-                </svg>
-            </a>
+<!-----------게시판 상세페이지 글 ------------------------------------------------->
+<div class="board-detail">
+    <div class="board-header"> 
+        <a href="{% url 'board:post_list_category' category=post.category %}" class="back-button" aria-label="이전 페이지로 이동">
+            <!-- 뒤로가기 아이콘 -->
+            <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M16.6249 17.5L23.3333 24.2083L21.2916 26.25L12.5416 17.5L21.2916 8.75L23.3333 10.7917L16.6249 17.5Z" fill="black" fill-opacity="0.28"/>
+            </svg>
+        </a>
 
-            <!-- 게시판 이름 -->
-            <span class="board-category" id="board-category"></span>
-            <!-- 수정, 삭제 버튼 -->
-            <form action="{% url 'board:post_edit' post.pk %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="edit-button">수정</button>
-            </form>           
-            <form action="{% url 'board:post_delete' post.pk %}" method="POST">
-                {% csrf_token %}
-                <button type="submit" class="delete-button">삭제</button>
-            </form>        
-        </div>
-
-        <div class="board-body">
-            <!-- 작성자와 시간 표시 영역 -->
-            <div class="board-meta-top">
-                <span class="board-author" id="board-author">{{ post.user }}</span>
-                <span class="board-date" id="board-date">{{ post.date }}</span>
-            </div>
-            <!-- 게시글 제목과 내용 -->
-            <h2 class="board-title" id="board-title">{{ post.title }}</h2>
-            <p class="board-content" id="board-content">{{ post.content }}</p>
-        </div>
-
-        <div class="board-footer">
-            <!-- 좋아요 버튼 -->
-            <form action="{% url 'board:post_like_toggle' post.pk %}" method="POST" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="like-button">
-                    {% if user in post.likes.all %}
-                        <!-- 좋아요 눌린 상태 -->
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="#E4A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>   
-
-                    {% else %}
-                        <!-- 좋아요 상태가 아닐 때 -->
-                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
-                       </svg>
-                    {% endif %}
-                </button>
-            </form>
-
-            <!-- 스크랩 버튼 -->
-            <form action="{% url 'board:post_scrap_toggle' post.pk %}" method="POST" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="scrap-button">
-                    {% if user in post.scraps.all %}
-                        <!-- 스크랩된 상태 -->
-                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M5.33975 20.1667L6.82933 13.7271L1.8335 9.39583L8.4335 8.82292L11.0002 2.75L13.5668 8.82292L20.1668 9.39583L15.171 13.7271L16.6606 20.1667L11.0002 16.7521L5.33975 20.1667Z" fill="#FFD559"/>
-                        </svg>
-                    {% else %}
-                        <!-- 스크랩되지 않은 상태 -->
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9.99984 1.66663L12.5748 6.88329L18.3332 7.72496L14.1665 11.7833L15.1498 17.5166L9.99984 14.8083L4.84984 17.5166L5.83317 11.7833L1.6665 7.72496L7.42484 6.88329L9.99984 1.66663Z" stroke="#FFBF00" stroke-opacity="0.65" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    {% endif %}
-                </button>
-            </form>
-            <span class="scrap-count">{{ post.scrap_count }}</span>
-        </div>
+        <!-- 게시판 이름 -->
+        <span class="board-category" id="board-category"></span>
+        <!-- 수정 버튼 -->
+        <a href="{% url 'board:post_edit' post.pk %}">
+            <button type="button" class="edit-button">수정</button>
+        </a>           
+        <!-- 삭제 버튼 -->
+        <form action="{% url 'board:post_delete' post.pk %}" method="POST" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="delete-button">삭제</button>
+        </form>        
     </div>
 
-    <!-- 댓글 목록 출력 -->
-    <div id="comment-list">
-        {% for c in comments %}
-            <div class="comment-item" id="comment-{{ c.id }}">
-                <div class="comment-top">
-                    <span class="comment-author">{{ c.user|default:"익명" }}</span>
-                    <form action="{% url 'board:comment_like_toggle' c.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="comment-like-btn">
-                            {% if user in c.likes.all %}
-                                <!-- 댓글 좋아요 눌린 상태 -->
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="#E4A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            {% else %}
-                                <!-- 댓글 좋아요 기본 상태 -->
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            {% endif %}
-                        </button>
-                    </form>
-                </div>
-                <p class="comment-content">{{ c.content }}</p>
-                <div class="comment-bottom">
-                    <span class="comment-date">{{ c.date }}</span>
-                    <span class="comment-like-count">
-                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3.20841 5.04163L5.04175 0.916626C5.40642 0.916626 5.75616 1.06149 6.01402 1.31935C6.27188 1.57722 6.41675 1.92695 6.41675 2.29163V4.12496H9.01091C9.14379 4.12345 9.2754 4.15086 9.39664 4.20527C9.51787 4.25968 9.62582 4.3398 9.71302 4.44007C9.80021 4.54034 9.86456 4.65838 9.90161 4.78599C9.93866 4.9136 9.94752 5.04775 9.92758 5.17913L9.29508 9.30413C9.26193 9.52271 9.15091 9.72195 8.98246 9.86513C8.814 10.0083 8.59948 10.0858 8.37842 10.0833H3.20841M3.20841 5.04163V10.0833M3.20841 5.04163H1.83341C1.5903 5.04163 1.35714 5.1382 1.18523 5.31011C1.01333 5.48202 0.916748 5.71518 0.916748 5.95829V9.16663C0.916748 9.40974 1.01333 9.6429 1.18523 9.81481C1.35714 9.98672 1.5903 10.0833 1.83341 10.0833H3.20841" stroke="#BA1A1A" stroke-opacity="0.4" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        {{ c.like_count }}
-                    </span>
-                </div>
-            </div>
-        {% endfor %}
+    <div class="board-body">
+        <!-- 작성자와 시간 표시 영역 -->
+        <div class="board-meta-top">
+            <span class="board-author" id="board-author">{{ post.user }}</span>
+            <span class="board-date" id="board-date">{{ post.date }}</span>
+        </div>
+        <!-- 게시글 제목과 내용 -->
+        <h2 class="board-title" id="board-title">{{ post.title }}</h2>
+        <p class="board-content" id="board-content">{{ post.content }}</p>
     </div>
-  
+
+    <div class="board-footer">
+        <!-- 좋아요 버튼 -->
+        <form action="{% url 'board:post_like_toggle' post.pk %}" method="POST" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="like-button">
+                {% if user in post.likes.all %}
+                    <!-- 좋아요 눌린 상태 -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="#E4A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>   
+                {% else %}
+                    <!-- 좋아요 상태가 아닐 때 -->
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                {% endif %}
+            </button>
+        </form>
+
+        <!-- 스크랩 버튼 -->
+        <form action="{% url 'board:post_scrap_toggle' post.pk %}" method="POST" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="scrap-button">
+                {% if user in post.scraps.all %}
+                    <!-- 스크랩된 상태 -->
+                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5.33975 20.1667L6.82933 13.7271L1.8335 9.39583L8.4335 8.82292L11.0002 2.75L13.5668 8.82292L20.1668 9.39583L15.171 13.7271L16.6606 20.1667L11.0002 16.7521L5.33975 20.1667Z" fill="#FFD559"/>
+                    </svg>
+                {% else %}
+                    <!-- 스크랩되지 않은 상태 -->
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9.99984 1.66663L12.5748 6.88329L18.3332 7.72496L14.1665 11.7833L15.1498 17.5166L9.99984 14.8083L4.84984 17.5166L5.83317 11.7833L1.6665 7.72496L7.42484 6.88329L9.99984 1.66663Z" stroke="#FFBF00" stroke-opacity="0.65" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                {% endif %}
+            </button>
+        </form>
+        <span class="scrap-count">{{ post.scrap_count }}</span>
+    </div>
+</div>
 <!-- 댓글 작성 영역 -->
 <div class="comment-box-wrapper">
     <div class="comment-box">
@@ -149,41 +110,56 @@
     </div>
 </div>
 <!-- 댓글 목록 출력 -->
-    <div id="comment-list">
-        {% for c in comments %}
-            <div class="comment-item" id="comment-{{ c.id }}">
-                <div class="comment-top">
-                    <span class="comment-author">{{ c.user|default:"익명" }}</span>
-                    <form action="{% url 'board:comment_like_toggle' c.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="comment-like-btn">
-                            {% if user in c.likes.all %}
-                                <!-- 댓글 좋아요 눌린 상태 -->
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="#E4A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            {% else %}
-                                <!-- 댓글 좋아요 기본 상태 -->
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                            {% endif %}
-                        </button>
-                    </form>
-                </div>
-                <p class="comment-content">{{ c.content }}</p>
-                <div class="comment-bottom">
-                    <span class="comment-date">{{ c.date }}</span>
-                    <span class="comment-like-count">
-                        <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M3.20841 5.04163L5.04175 0.916626C5.40642 0.916626 5.75616 1.06149 6.01402 1.31935C6.27188 1.57722 6.41675 1.92695 6.41675 2.29163V4.12496H9.01091C9.14379 4.12345 9.2754 4.15086 9.39664 4.20527C9.51787 4.25968 9.62582 4.3398 9.71302 4.44007C9.80021 4.54034 9.86456 4.65838 9.90161 4.78599C9.93866 4.9136 9.94752 5.04775 9.92758 5.17913L9.29508 9.30413C9.26193 9.52271 9.15091 9.72195 8.98246 9.86513C8.814 10.0083 8.59948 10.0858 8.37842 10.0833H3.20841M3.20841 5.04163V10.0833M3.20841 5.04163H1.83341C1.5903 5.04163 1.35714 5.1382 1.18523 5.31011C1.01333 5.48202 0.916748 5.71518 0.916748 5.95829V9.16663C0.916748 9.40974 1.01333 9.6429 1.18523 9.81481C1.35714 9.98672 1.5903 10.0833 1.83341 10.0833H3.20841" stroke="#BA1A1A" stroke-opacity="0.4" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        {{ c.like_count }}
-                    </span>
-                </div>
+<div id="comment-list">
+    {% for c in comments %}
+        <div class="comment-item" id="comment-{{ c.id }}">
+            <div class="comment-top">
+                <span class="comment-author">
+                    {% if c.is_anonymous %}
+                        익명
+                    {% else %}
+                        {{ c.user }}
+                    {% endif %}
+                </span>
+
+              <!-- 댓글 수정 버튼은 작성자에게만 보이도록 -->
+            {% if request.user == c.user or c.is_anonymous and request.user == c.user %}
+                <a href="{% url 'board:comment_edit' c.id %}" class="comment-edit-btn">
+                    <button type="button" class="edit-comment-btn">수정</button>
+                </a>
+            {% endif %}
+
+
+                <form action="{% url 'board:comment_like_toggle' c.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="comment-like-btn">
+                        {% if user in c.likes.all %}
+                            <!-- 댓글 좋아요 눌린 상태 -->
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="#E4A3A3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        {% else %}
+                            <!-- 댓글 좋아요 기본 상태 -->
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 11L11 2C11.7956 2 12.5587 2.31607 13.1213 2.87868C13.6839 3.44129 14 4.20435 14 5V9H19.66C19.9499 8.99672 20.2371 9.0565 20.5016 9.17522C20.7661 9.29393 21.0016 9.46873 21.1919 9.68751C21.3821 9.90629 21.5225 10.1638 21.6033 10.4423C21.6842 10.7207 21.7035 11.0134 21.66 11.3L20.28 20.3C20.2077 20.7769 19.9654 21.2116 19.5979 21.524C19.2304 21.8364 18.7623 22.0055 18.28 22H7M7 11V22M7 11H4C3.46957 11 2.96086 11.2107 2.58579 11.5858C2.21071 11.9609 2 12.4696 2 13V20C2 20.5304 2.21071 21.0391 2.58579 21.4142C2.96086 21.7893 3.46957 22 4 22H7" stroke="black" stroke-opacity="0.2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        {% endif %}
+                    </button>
+                </form>
             </div>
-        {% endfor %}
-    </div>
+            <p class="comment-content">{{ c.content }}</p>
+            <div class="comment-bottom">
+                <span class="comment-date">{{ c.created_at|date:"Y-m-d H:i" }}</span>
+                <span class="comment-like-count">
+                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3.20841 5.04163L5.04175 0.916626C5.40642 0.916626 5.75616 1.06149 6.01402 1.31935C6.27188 1.57722 6.41675 1.92695 6.41675 2.29163V4.12496H9.01091C9.14379 4.12345 9.2754 4.15086 9.39664 4.20527C9.51787 4.25968 9.62582 4.3398 9.71302 4.44007C9.80021 4.54034 9.86456 4.65838 9.90161 4.78599C9.93866 4.9136 9.94752 5.04775 9.92758 5.17913L9.29508 9.30413C9.26193 9.52271 9.15091 9.72195 8.98246 9.86513C8.814 10.0083 8.59948 10.0858 8.37842 10.0833H3.20841M3.20841 5.04163V10.0833M3.20841 5.04163H1.83341C1.5903 5.04163 1.35714 5.1382 1.18523 5.31011C1.01333 5.48202 0.916748 5.71518 0.916748 5.95829V9.16663C0.916748 9.40974 1.01333 9.6429 1.18523 9.81481C1.35714 9.98672 1.5903 10.0833 1.83341 10.0833H3.20841" stroke="#BA1A1A" stroke-opacity="0.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    {{ c.like_count }}
+                </span>
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
 
 <script>
