@@ -5,6 +5,7 @@
 {% block content %}
 
 <h1 class="page-title">📋 내가 쓴 글</h1>
+
 <style>
 /* 카드 전체 스타일 */
 .post-card {
@@ -25,13 +26,13 @@
 /* 카테고리 */
 .post-card-category {
     font-size: 12px;
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 6px;
-            background-color: #eef1ff;
-            color: #2f3ecf;
-            margin-bottom: 8px;
-            font-weight: 600;;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background-color: #eef1ff;
+    color: #2f3ecf;
+    margin-bottom: 8px;
+    font-weight: 600;
 }
 
 /* 제목 */
@@ -57,7 +58,6 @@
     margin: 4px 0;
 }
 
-
 .post-card-info {
    display: flex;
     gap: 18px;
@@ -65,10 +65,10 @@
     color: #7a7a7a;
 }
 .post-card-info span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
 </style>
 
 {% if posts %}
@@ -95,13 +95,22 @@
             | 좋아요: {{ post.like_count }}
         </p>
 
-       
-
         <div class="post-card-info">
             <span>👍 {{ post.like_count }}</span>
             <span>💬 {{ post.comment_set.count }}</span>
             <span>작성일: {{ post.date|date:"Y-m-d H:i" }}</span>
         </div>
+
+        <!-- 수정 및 삭제 버튼 추가 -->
+        {% if post.is_editable %}
+            <div class="post-card-actions">
+                <a href="{% url 'board:post_edit' post.pk %}" class="btn btn-primary">수정</a>
+                <form action="{% url 'board:post_delete' post.pk %}" method="POST" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">삭제</button>
+                </form>
+            </div>
+        {% endif %}
 
     </div>
     {% endfor %}

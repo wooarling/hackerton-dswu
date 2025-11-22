@@ -23,19 +23,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* 댓글이 달린 게시글 제목 */
-.post-card-category {
-    font-size: 12px;
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background-color: #eef1ff;
-    color: #2f3ecf;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-/* 댓글 작성자 & 내용 */
+/* 댓글 작성자 및 내용 */
 .post-card-title {
     font-size: 16px;
     font-weight: 600;
@@ -57,6 +45,18 @@
     margin: 4px 0;
 }
 
+/* 카테고리 스타일 */
+.post-card-category {
+    font-size: 12px;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background-color: #eef1ff;
+    color: #2f3ecf;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
 .post-card-info {
     display: flex;
     gap: 18px;
@@ -71,34 +71,38 @@
 }
 </style>
 
+<!-- 내가 작성한 댓글 목록 -->
 {% if comments %}
     {% for comment in comments %}
     <div class="post-card">
+        
+        <!-- 댓글이 달린 게시글의 카테고리만 표시 -->
         <div class="post-card-category">
-            {{ post.get_category_display }}
+            <a href="{% url 'board:post_detail' comment.post.pk %}">
+                {{ comment.post.get_category_display }}
+            </a>
         </div>
-        <div class="post-card-category">
-            <댓글이 달린 글> 
+
+        <div class="post-card-title">
             <a href="{% url 'board:post_detail' comment.post.pk %}">
                 {{ comment.post.title }}
             </a>
         </div>
 
-        <div class="post-card-title">
-            {% if comment.is_anonymous %}
+        <p style="font-size: 14px;">
+            작성자: 
+            {% if comment.post.is_anonymous %}
                 익명
             {% else %}
-                {{ comment.user.username }}
+                {{ comment.post.user.username }}
             {% endif %}
-        </div>
-
-        <p>
-            {{ comment.content|truncatechars:120 }}
+            | 좋아요: {{ comment.post.like_count }}
         </p>
 
         <div class="post-card-info">
-            <span>👍 {{ comment.like_count }}</span>
-            <span>작성일: {{ comment.created_at|date:"Y-m-d H:i" }}</span>
+            <span>👍 {{ comment.post.like_count }}</span>
+            <span>💬 {{ comment.post.comment_set.count }}</span>
+            <span>작성일: {{ comment.post.created_at|date:"Y-m-d H:i" }}</span>
         </div>
 
     </div>

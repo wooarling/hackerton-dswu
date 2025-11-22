@@ -59,10 +59,28 @@ label {
   border-radius: 6px;
 }
 
+.file-upload {
+  margin-top: 20px;
+}
+
+.file-upload label {
+  font-weight: normal;
+}
+
+.file-upload input {
+  padding: 5px;
+  margin-top: 5px;
+}
+
+.delete-file-checkbox {
+  margin-top: 10px;
+  font-size: 14px;
+  display: inline-block;
+}
 </style>
 
 <div class="content-area">
-    <form id="edit-post-form" method="post" action="{% url 'board:post_edit' post.pk %}">
+    <form id="edit-post-form" method="post" action="{% url 'board:post_edit' post.pk %}" enctype="multipart/form-data">
         {% csrf_token %}
 
         <h2>게시글 수정</h2>
@@ -77,6 +95,25 @@ label {
             <input type="checkbox" name="is_anonymous" {% if post.is_anonymous %}checked{% endif %}>
             익명으로 작성
         </label>
+
+        <!-- 파일 업로드 섹션 -->
+        <div class="file-upload">
+            <label for="file">파일 첨부 (선택):</label>
+            <input type="file" name="file" id="file">
+            
+            {% if post.file %}
+                <div class="current-file">
+                    <strong>현재 파일:</strong> 
+                    <a href="{{ post.file.url }}" target="_blank">{{ post.file.name }}</a>
+                    <br>
+                    <!-- 파일 삭제 체크박스 -->
+                    <label class="delete-file-checkbox">
+                        <input type="checkbox" name="delete_file">
+                        파일 삭제
+                    </label>
+                </div>
+            {% endif %}
+        </div>
 
         <div class="button-group">
             <!-- 수정 버튼 (POST 방식으로 제출) -->

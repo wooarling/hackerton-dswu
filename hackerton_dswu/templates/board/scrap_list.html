@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+
 {% block title %}내가 스크랩한 글{% endblock %}
 
 {% block content %}
-
 <h1 class="page-title">📌 내가 스크랩한 글</h1>
 
+<!-- 스크랩 글 리스트 스타일 -->
 <style>
 /* 카드 전체 스타일 */
 .post-card {
@@ -22,7 +23,7 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* 카테고리 */
+/* 카테고리 스타일 */
 .post-card-category {
     font-size: 12px;
     display: inline-block;
@@ -34,7 +35,7 @@
     font-weight: 600;
 }
 
-/* 제목 */
+/* 제목 스타일 */
 .post-card-title {
     font-size: 17px;
     font-weight: 600;
@@ -50,36 +51,37 @@
     color: #007bff;
 }
 
-/* 작성자 & 좋아요 */
+/* 작성자 & 좋아요 스타일 */
 .post-card p {
     font-size: 14px;
     color: #444;
     margin: 4px 0;
 }
 
-/* 카드 하단 정보 */
 .post-card-info {
-   display: flex;
-   gap: 18px;
-   font-size: 13px;
-   color: #7a7a7a;
+    display: flex;
+    gap: 18px;
+    font-size: 13px;
+    color: #7a7a7a;
 }
 
 .post-card-info span {
-   display: flex;
-   align-items: center;
-   gap: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
+/* 스크랩 버튼 스타일 */
 .post-card form button {
-    margin-top: 8px;
-    padding: 4px 10px;
+    padding: 6px 14px;
     border: 1px solid #2f3ecf;
     border-radius: 6px;
     background-color: #eef1ff;
     color: #2f3ecf;
     font-size: 13px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
 }
 
 .post-card form button:hover {
@@ -87,6 +89,7 @@
 }
 </style>
 
+<!-- 스크랩한 글이 있을 경우 보여주는 목록 -->
 {% if scraps %}
     {% for post in scraps %}
     <div class="post-card">
@@ -117,7 +120,7 @@
             <span>작성일: {{ post.date|date:"Y-m-d H:i" }}</span>
         </div>
 
-         <!-- 스크랩 토글 -->
+        <!-- 스크랩 토글 -->
         <form action="{% url 'board:post_scrap_toggle' post.pk %}" method="post" style="display:inline;">
             {% csrf_token %}
             {% if user in post.scraps.all %}
@@ -132,5 +135,4 @@
 {% else %}
     <p>아직 스크랩한 글이 없습니다.</p>
 {% endif %}
-
 {% endblock %}

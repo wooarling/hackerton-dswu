@@ -3,7 +3,7 @@ from .views import (
     post_list, post_detail, post_edit, post_delete,
     post_like_toggle, post_create, comment_create, comment_like_toggle,
     popular_posts,
-    my_posts, my_comments, my_scraps, post_scrap_toggle, comment_edit,comment_delete,
+    my_posts, my_comments, my_scraps, post_scrap_toggle, comment_edit, comment_delete,
     PostList  # 추가된 API 뷰
 )
 
@@ -46,6 +46,5 @@ urlpatterns = [
 
     # -------------------- 댓글 수정 --------------------
     path('comment/edit/<int:pk>/', comment_edit, name='comment_edit'),  # views.comment_edit로 수정
-    path('comment/delete/<int:pk>/',comment_delete, name='comment_delete'),  # 댓글 삭제 URL
+    path('comment/delete/<int:pk>/', comment_delete, name='comment_delete'),  # 댓글 삭제 URL
 ]
-
