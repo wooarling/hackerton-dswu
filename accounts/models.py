@@ -1,7 +1,8 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Group, Permission
 
-#  UserManager 정의
+# UserManager 정의
 class UserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
@@ -16,7 +17,7 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(username, password, **extra_fields)
 
-#  User 모델 정의
+# User 모델 정의
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True)
     password = models.CharField(max_length=128)
@@ -28,6 +29,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     birth_date = models.DateField()
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+
+    # 익명 여부 필드 추가
+    is_anonymous = models.BooleanField(default=False)
 
     # 그룹/권한 필드에 related_name 지정
     groups = models.ManyToManyField(
@@ -48,3 +52,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='posts')
+    is_anonymous = models.BooleanField(default=False)  # 익명 여부 필드 추가
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+
+
+# Comment 모델 정의 (댓글)
+class Comment(models.Model):
+    content = models.TextField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
+    is_anonymous = models.BooleanField(default=False)  # 댓글이 익명인지 아닌지
+    created_at = models.DateTimeField(auto_now_add=True)
+    post = models.ForeignKey(Post, related_name="comments", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.content
